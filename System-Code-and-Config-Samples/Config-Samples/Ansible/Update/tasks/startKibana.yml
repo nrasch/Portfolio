@@ -1,0 +1,6 @@
+#Tasks dealing with ensuring the Kibana service is started
+
+- name: Start Kibana service
+  service: name=kibana state=started
+  become: yes              
+  become_method: sudo 

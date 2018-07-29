@@ -1,0 +1,37 @@
+#Tasks dealing with backing up the MySQL DB
+
+- name: Confirm backup directory exists
+  stat: path=/backups/mysql
+  register: stat_result
+
+- name: Create backup directory if missing
+  file: path=/backups/mysql state=directory
+  when: stat_result.stat.exists == False
+
+- name: Gather EC2 instance facts
+  action: ec2_facts
+
+- name: Clear out contents of backup directory
+  shell: rm -rf /backups/mysql/*
+
+- name: Dump MySQL DB
+  shell: "mysqldump -u root -p{{ mysql_root_password | quote }} {{ db_name }} > /backups/mysql/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.sql"
+
+- name: Zip DB dump
+  shell: "sudo zip -r /backups/mysql/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip /backups/mysql/*"
+
+- name: Calculate md5 checksum for Zip of snapshot
+  stat: path="/backups/mysql/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip" get_md5=yes
+  register: stat_md5
+
+- name: Debug
+  debug: var=stat_md5.stat.md5
+
+- name: Copy over boto.cfg file for S3 authentication
+  copy: src=boto.cfg dest=/etc/boto.cfg
+
+- name: Create S3 bucket for instance
+  s3: bucket="{{ansible_ec2_instance_id}}-mysql-backups" mode=create
+
+- name: Move to S3 bucket
+  s3: bucket="{{ansible_ec2_instance_id}}-mysql-backups" object="{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip" src="/backups/mysql/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip" metadata="x-amz-meta-md5-checksum={{stat_md5.stat.md5}}" mode=put

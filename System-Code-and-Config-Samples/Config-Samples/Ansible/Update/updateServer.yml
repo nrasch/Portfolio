@@ -1,0 +1,16 @@
+# Playbook for updating the server(s)
+
+- name: Update production servers
+  hosts: tag_SERVER_YES:&tag_PROD_YES
+  remote_user: ubuntu
+
+  roles:
+    - common
+
+  tasks: 
+    - include: /opt/ansible/roles/common/tasks/upgradeOS.yml
+    - include: /opt/ansible/roles/common/tasks/rebootOS.yml
+    - include: /opt/ansible/roles/common/tasks/startKibana.yml
+      when: ec2_tag_KIBANA is defined
+    - include: /opt/ansible/roles/common/tasks/startKibi.yml
+      when: ec2_tag_KIBI is defined

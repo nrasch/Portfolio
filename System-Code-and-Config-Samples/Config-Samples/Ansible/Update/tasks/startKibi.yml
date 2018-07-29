@@ -1,0 +1,6 @@
+#Tasks dealing with ensuring the Kibi service is started
+
+- name: Start Kibi service
+  service: name=kibi state=started
+  become: yes              
+  become_method: sudo 

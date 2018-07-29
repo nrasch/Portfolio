@@ -1,0 +1,205 @@
+server_tokens off;
+
+# ES - ES Server
+upstream elasticsearch {
+    server 127.0.0.1:9200;
+    keepalive 64;
+}
+
+# ES - HTTP server
+server {
+    listen 80;
+    server_name some-es.server.com;
+
+    return 301 https://$host$request_uri;
+}
+
+# ES - HTTPS server
+server {
+    listen 443;
+    server_name some-es.server.com;
+
+    ssl on;
+    ssl_certificate 		/var/dash-utils/SSL/XXX.crt;
+    ssl_certificate_key 	/var/dash-utils/SSL/XXX.key;
+
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:1m;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    ssl_dhparam /var/dash-utils/SSL/dhparam.pem;
+
+    # enables server-side protection from BEAST attacks
+    # http://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html
+    ssl_prefer_server_ciphers on;
+    
+    # disable SSLv3(enabled by default since nginx 0.8.19) since it's less secure then TLS http://en.wikipedia.org/wiki/Secure_Sockets_Layer#SSL_3.0
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    
+    # ciphers chosen for forward secrecy and compatibility
+    # http://blog.ivanristic.com/2013/08/configuring-apache-nginx-and-openssl-for-forward-secrecy.html
+    ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    
+    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /var/dash-utils/SSL/gd_bundle-g2-g1.crt;
+    resolver 10.0.0.2;
+
+
+    # Allow access from UI server - Kibana needs these
+    location ~ "_nodes|_mapping|_bulk|_alias|_aliases" {
+
+        allow X.X.X.X;      #UI Server
+        deny all;
+
+        # All of the many, many settings needed to handle CORS between the UI and API
+        if ($request_method = OPTIONS ) {
+            add_header Access-Control-Allow-Origin "https://some.server.com";
+            add_header Access-Control-Allow-Methods "GET, OPTIONS, PUT, DELETE";
+            add_header Access-Control-Allow-Headers "X-Auth-Token,Authorization,Content-Type";
+            add_header Access-Control-Allow-Credentials "true";
+            return 204;
+        }
+
+        proxy_pass http://elasticsearch;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header  X-Real-IP  $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  Host $http_host;
+
+        proxy_hide_header Access-Control-Allow-Origin;
+        add_header Access-Control-Allow-Origin "https://some.server.com";
+        add_header Access-Control-Allow-Credentials "true";
+        add_header Access-Control-Allow-Methods "GET, OPTIONS, PUT, DELETE";
+        add_header 'Access-Control-Allow-Headers' 'X-Auth-Token,Authorization,Content-Type';
+        add_header X-Frame-Options SAMEORIGIN;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+        # Authorize access
+        auth_basic           "";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+  
+  
+    # Default rule set for ES 
+    location / {
+        # Deny access to naughty parts of ES...
+        location ~ "_shutdown|_cluster|_flush|_close|_search_shards|_open|_settings|_segments|_stats|_status" {
+            return 403;
+        }
+
+        # All of the many, many settings needed to handle CORS between the UI and API
+        if ($request_method = OPTIONS ) {
+            add_header Access-Control-Allow-Origin "https://some.server.com";
+            add_header Access-Control-Allow-Methods "GET, OPTIONS, PUT, DELETE";
+            add_header Access-Control-Allow-Headers "X-Auth-Token,Authorization,Content-Type";
+            add_header Access-Control-Allow-Credentials "true";
+            return 204;
+        }
+
+        proxy_pass http://elasticsearch;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+
+        proxy_set_header  X-Real-IP  $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  Host $http_host;
+
+        proxy_hide_header Access-Control-Allow-Origin;
+        add_header Access-Control-Allow-Origin "https://some.server.com";
+        add_header Access-Control-Allow-Credentials "true";
+        add_header Access-Control-Allow-Methods "GET, OPTIONS, PUT, DELETE";
+        add_header 'Access-Control-Allow-Headers' 'X-Auth-Token,Authorization,Content-Type';
+        add_header X-Frame-Options SAMEORIGIN;
+        add_header X-Content-Type-Options nosniff;
+        add_header X-XSS-Protection "1; mode=block";
+        add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+
+
+        # Authorize access
+        auth_basic           "";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+    }
+
+}
+
+# API - HTTP server
+#
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server ipv6only=on;
+
+    server_name some-api.server.com;
+    return 301 https://$host$request_uri;
+}
+
+# API - HTTPS server
+#
+server {
+    listen 443;
+    server_name some-api.server.com;
+
+    root /var/www/api/public;
+    index index.php index.html index.htm;
+
+    ssl on;
+    ssl_certificate /var/dash-utils/SSL/74e18e845e37b4f7.crt;
+    ssl_certificate_key /var/dash-utils/SSL/dashclinical.key;
+
+    ssl_session_timeout 5m;
+    ssl_session_cache shared:SSL:1m;
+
+    # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+    ssl_dhparam /var/dash-utils/SSL/dhparam.pem;
+
+    # enables server-side protection from BEAST attacks
+    # http://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html
+    ssl_prefer_server_ciphers on;
+    
+    # disable SSLv3(enabled by default since nginx 0.8.19) since it's less secure then TLS http://en.wikipedia.org/wiki/Secure_Sockets_Layer#SSL_3.0
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    
+    # ciphers chosen for forward secrecy and compatibility
+    # http://blog.ivanristic.com/2013/08/configuring-apache-nginx-and-openssl-for-forward-secrecy.html
+    ssl_ciphers "ECDHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-SHA384:ECDHE-RSA-AES128-SHA256:ECDHE-RSA-AES256-SHA:ECDHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA:ECDHE-RSA-DES-CBC3-SHA:EDH-RSA-DES-CBC3-SHA:AES256-GCM-SHA384:AES128-GCM-SHA256:AES256-SHA256:AES128-SHA256:AES256-SHA:AES128-SHA:DES-CBC3-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!MD5:!PSK:!RC4";
+
+    # config to enable HSTS(HTTP Strict Transport Security) https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
+    # to avoid ssl stripping https://en.wikipedia.org/wiki/SSL_stripping#SSL_stripping
+    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;";
+    add_header 'Access-Control-Allow-Headers' 'X-Auth-Token';
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    
+    ## verify chain of trust of OCSP response using Root CA and Intermediate certs
+    ssl_trusted_certificate /var/dash-utils/SSL/gd_bundle-g2-g1.crt;
+    resolver 10.0.0.2;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        try_files $uri /index.php =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass unix:/var/run/php5-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}

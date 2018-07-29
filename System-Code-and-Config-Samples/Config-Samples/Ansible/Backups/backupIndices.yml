@@ -1,0 +1,44 @@
+#Tasks dealing with backing up ElasticSearch indices
+
+- name: Confirm backup directory exists
+  stat: path=/backups/es
+  register: stat_result
+
+- name: Create backup directory
+  file: path=/backups/es state=directory owner=elasticsearch
+  when: stat_result.stat.exists == False
+
+- name: Register snapshot repository in Elasticsearch
+  shell: 'curl -XPUT ''localhost:9200/_snapshot/backup'' -d ''{"type": "fs", "settings": {"location": "/backups/es" }}'';'
+  when: stat_result.stat.exists == False
+
+- name: Clear out contents of backup directory
+  shell: rm -rf /backups/es/*
+
+- name: Take snapshot of all indices
+  shell: 'sudo curl -XPUT ''localhost:9200/_snapshot/backups/all_1?wait_for_completion=true'''
+
+- name: Take snapshot of all indices mappings
+  shell: 'curl -XGET ''http://localhost:9200/_all/_mapping?pretty'' > /backups/es/mappings.json'
+
+- name: Gather EC2 instance facts
+  action: ec2_facts
+
+- name: Zip snapshot
+  shell: "sudo zip -r /backups/es/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip /backups/es/*"
+
+- name: Calculate md5 checksum for Zip of snapshot
+  stat: path="/backups/es/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip" get_md5=yes
+  register: stat_md5
+
+- name: Debug
+  debug: var=stat_md5.stat.md5
+
+- name: Copy over boto.cfg file for S3 authentication
+  copy: src=boto.cfg dest=/etc/boto.cfg
+
+- name: Create S3 bucket for instance
+  s3: bucket="{{ansible_ec2_instance_id}}-es-backups" mode=create
+
+- name: Move to S3 bucket
+  s3: bucket="{{ansible_ec2_instance_id}}-es-backups" object="{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip" src="/backups/es/{{ansible_ec2_instance_id}}-{{ansible_date_time.date}}.zip" metadata="x-amz-meta-md5-checksum={{stat_md5.stat.md5}}" mode=put

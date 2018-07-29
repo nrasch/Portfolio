@@ -1,0 +1,12 @@
+<suite name="SearchTesting">
+	<parameter name="baseURL" value="https://SOME-URL/" />
+	<parameter name="logger" value="ReportLogger" />
+	<parameter name="driverManager" value="LocalDriverManager" />
+	<parameter name="browser" value="firefox" />
+	<parameter name="implicitlyWait" value="10" />
+	<test name="ZipcodeSearch">
+		<classes>
+			<class name="searchTesting.ZipcodeSearchFactory"/>
+		</classes>
+	</test>
+</suite>

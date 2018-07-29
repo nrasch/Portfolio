@@ -1,0 +1,16 @@
+# Tasks dealing with upgrading/patching the OS
+
+- name: Apt update
+  apt: update_cache=yes
+  become: yes
+  become_method: sudo
+
+- name: Apt upgrade
+  apt: upgrade=dist
+  become: yes
+  become_method: sudo
+
+#- name: Apt autoremove
+#  apt: autoremove=yes
+#  become: yes 
+#  become_method: sudo
