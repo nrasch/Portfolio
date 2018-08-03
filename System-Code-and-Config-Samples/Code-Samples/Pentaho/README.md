@@ -9,8 +9,9 @@ I recently needed to add a summary row to a Pentaho C-Tools table component that
 1. Sum all the values from a particular column in the table
 2. Report what percentage of the whole those values made up
 
-![Summary Table](images/summary-table.png)
+I was hoping to have output that looked something like this:
 
+![Summary Table](images/summary-table.png)
 
 I wasn't able to find a way to do this natively utilizing C-Tools commands, so needed a way to create and append the summary row myself.
 
@@ -26,23 +27,24 @@ FROM FACT_TABLE
 2. Assign the output of the SQL into a `simple parameter` component:
 * Create the `simple parameter` component
 
-simple-parameter.png
+![Simple Param](images/simple-parameter.png)
+
 
 * Create a `query component` to run the total record count query when the page loads and store the results in the `simple parameter` we created above
 
-query-component.png
-
+![Query Component](images/query-component.png)
 
 ### Create and modify the data table
 Next, I needed to create the data table and add the summary row:
 
 1. Create a `table component` call it 'facilitySubtotalsTable'
 
-create-table-component.png
+![Create Table Component](images/create-table-component.png)
+
 
 2. Add whatever data source populates the table's rows and columns, parameters, associate the `table component` with the `HtmlObject` that draws the table on the page, etc.
 
-modify-table-component.png
+![Modify Table Component](images/modify-table-component.png)
 
 3. Under the table's 'Advanced Properties > Post Execution' area fill in the following JavaScript:
 
