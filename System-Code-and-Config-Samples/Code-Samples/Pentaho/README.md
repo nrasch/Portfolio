@@ -30,9 +30,12 @@ FROM FACT_TABLE
 ![Simple Param](images/simple-parameter.png)
 
 
+
 * Create a `query component` to run the total record count query when the page loads and store the results in the `simple parameter` we created above
 
 ![Query Component](images/query-component.png)
+
+
 
 ### Create and modify the data table
 Next, I needed to create the data table and add the summary row:
@@ -42,9 +45,12 @@ Next, I needed to create the data table and add the summary row:
 ![Create Table Component](images/create-table-component.png)
 
 
+
 2. Add whatever data source populates the table's rows and columns, parameters, associate the `table component` with the `HtmlObject` that draws the table on the page, etc.
 
 ![Modify Table Component](images/modify-table-component.png)
+
+
 
 3. Under the table's 'Advanced Properties > Post Execution' area fill in the following JavaScript:
 
