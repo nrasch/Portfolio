@@ -9,7 +9,7 @@ I recently needed to add a summary row to a Pentaho C-Tools table component that
 1. Sum all the values from a particular column in the table
 2. Report what percentage of the whole those values made up
 
-![Summary Table](/images/summary-table.png)
+![Summary Table](images/summary-table.png)
 
 
 I wasn't able to find a way to do this natively utilizing C-Tools commands, so needed a way to create and append the summary row myself.
