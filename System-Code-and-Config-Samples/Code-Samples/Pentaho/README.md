@@ -13,12 +13,12 @@ I was hoping to have output that looked something like this:
 
 ![Summary Table](images/summary-table.png)
 
-I wasn't able to find a way to do this natively utilizing C-Tools commands, so needed a way to create and append the summary row myself.
+I wasn't able to find a way to do this natively utilizing C-Tools components, so I needed a way to create and append the summary row myself.
 
-### Fetch and store grand total
+### Fetch and store the grand total of all records
 In order to accomplish this I first needed to fetch and store the grand total of all records:
 
-1. Create a `sql over sqlJndi` object called 'totalRecordCount' with the following query to pull the grand total value:
+1. Create a `sql over sqlJndi` object called 'totalRecordCount' with the following SQL to aggregate the count of all records:
 ```sql
 SELECT COUNT(*) AS TOTAL 
 FROM FACT_TABLE
@@ -31,14 +31,14 @@ FROM FACT_TABLE
 
 
 
-* Create a `query component` to run the total record count query when the page loads and store the results in the `simple parameter` we created above
+* Create a `query component` to run the total record count query when the page loads and store the results in the `simple parameter` component we created above
 
 ![Query Component](images/query-component.png)
 
 
 
 ### Create and modify the data table
-Next, I needed to create the data table and add the summary row:
+Next, I needed to create the data table and add the summary row in the UI:
 
 1. Create a `table component` call it 'facilitySubtotalsTable'
 
@@ -46,13 +46,13 @@ Next, I needed to create the data table and add the summary row:
 
 
 
-2. Add whatever data source populates the table's rows and columns, parameters, associate the `table component` with the `HtmlObject` that draws the table on the page, etc.
+2. Add data source, parameters, associate the `table component` with the `HtmlObject` that draws the table on the page, etc.
 
 ![Modify Table Component](images/modify-table-component.png)
 
 
 
-3. Under the table's 'Advanced Properties > Post Execution' area fill in the following JavaScript:
+3. Under the table's 'Advanced Properties > Post Execution' area enter the following JavaScript:
 
 ```javascript
 function f() {
@@ -86,26 +86,26 @@ function f() {
 }
 ``` 
 
-4. Save your work and you should have something similar to the screenshot at the beginning of this write-up  :)
+4. Once we our work we should have something similar to the screenshot at the beginning of this write-up  :)
 
 
 ### JavaScript breakdown
 
-Let's go over the JavaScript that we placed in the 'Advanced Properties > Post Execution' area of the 'facilitySubtotalsTable' `table component`
+Let's go over the JavaScript that we placed in the 'Advanced Properties > Post Execution' area of the 'facilitySubtotalsTable' `table component` and see what it's doing:
 
-This allows us to attach to the result of the query we can to gather the grand total when the page loaded and store it in a JS variable.
+1. Attach to the results of the query, so that we can aggregate the grand total when the page loaded and store it in a JS variable for use later on:
 ```javascript
 var totalRecords = Dashboards.getParameterValue("totalRecordCount")[0];
 ```
 
-Next, we initialize a JavaScript dictionary to store the results of the column calculations:
+2. Initialize a JavaScript dictionary to store the results of the column calculations:
 ```javascript
 var totals = {};
 totals['records'] = 0;
 totals['percentage'] = 0;
 ```
 
-Now we sum the values of the third column in the dataset and determine what percentage of the grand total the sum is:
+3. Sum the values of the third column in the dataset and determine what percentage of the grand total the sum is:
 ```javascript
 this.rawData.resultset.forEach(function(element) {
     totals['records'] += element[2];
@@ -114,7 +114,7 @@ this.rawData.resultset.forEach(function(element) {
 totals['percentage'] = ((totals['records'] / totalRecords) * 100).toFixed(2);
 ```
 
-We create the HTML for the summary column of the table:
+4. Create the HTML for the last summary row of the table:
 
 ```javascript
 var subtotalSumHtml = 
@@ -127,7 +127,7 @@ var subtotalSumHtml =
    '</p>';
 ```
 
-And finally append the summary HTML to the end of the table object:
+5. Append the summary row HTML to the end of the table object:
 ```javascript
 $('<div>', {
     id: 'subtotalSumDiv',
