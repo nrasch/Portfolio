@@ -14,7 +14,7 @@ This set of write-ups covers creating binary image classification systems utiliz
   * The objectives of this write-up include:
     * Build a binary image classifier utilizing a shallow neural network
     * Tune and train a number of models, pick the best performing candidate, and compare to the established performance baseline
-	* Pave the way for further, more advanced optimizations
+    * Pave the way for further, more advanced optimizations
 
     
 * [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
@@ -23,4 +23,14 @@ This set of write-ups covers creating binary image classification systems utiliz
     * Build a generalized binary image classifier supporting N-number of layers
     * Allow model parameters to be stored to disk, read, and then utilized 
     * Training and testing to assure the generalized model code functions properly
-	* Continue to pave the way for further, more advanced optimizations
+    * Continue to pave the way for further, more advanced optimizations
+    
+
+* [Binary Image Classifier - Part Four (In progress)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
+
+  * The objectives of this write-up include:
+    * He initialization
+    * Switching over to the ReLu activation function
+    * Drop out regularization
+    * Mini-batch gradient descent
+    * Adam optimization

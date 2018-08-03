@@ -7,6 +7,7 @@
 * [Binary Image Classifier - Part One (Apr 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartOne.ipynb)
 * [Binary Image Classifier - Part Two (May 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartTwo.ipynb)
 * [Binary Image Classifier - Part Three (Jul 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
+* [Binary Image Classifier - Part Four (In progress)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
 
 ## Implementations in R (and some Octave)
 * [Basic Graphing Examples (Nov 2017 - 1,952 words)](./R/Basic-Graphing-Nov-2017)
@@ -81,6 +82,7 @@ Once the unsupervised learning  model identified the student population clusters
 * [Binary Image Classifier - Part One (Apr 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartOne.ipynb)
 * [Binary Image Classifier - Part Two (May 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartTwo.ipynb)
 * [Binary Image Classifier - Part Three (Jul 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
+* [Binary Image Classifier - Part Four (In progress)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
 
 ## Implementations in R (and some Octave)
 * [Basic Graphing Examples (Nov 2017 - 1,952 words)](./R/Basic-Graphing-Nov-2017)
