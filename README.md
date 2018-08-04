@@ -1,7 +1,5 @@
-Nathan Rasch
-
-Ph: (415) 290-2918
-
+Nathan Rasch<br/>
+Ph: (415) 290-2918<br/>
 Em: nathan@obsidiantech.net
 
 
@@ -21,7 +19,7 @@ EXAMPLES OF PAST PROJECTS:
 * Currently bootstrapping machine learning
 
 
-TECHNOLOGIES UTILIZED:
+TECHNOLOGIES UTILIZED:<br/>
 Pentaho, JavaScript, Python, Oracle, PHP, Laravel, Elasticsearch, Kibana, MySQL, Javascript, Java, Python, Amazon AWS, Git, bash scripting, Linux, Hadoop, Trello, JIRA, Angular JS, R, Nagios, Nginx, Selenium
 
 
