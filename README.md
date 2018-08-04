@@ -1,5 +1,7 @@
 Nathan Rasch
+
 Ph: (415) 290-2918
+
 Em: nathan@obsidiantech.net
 
 
