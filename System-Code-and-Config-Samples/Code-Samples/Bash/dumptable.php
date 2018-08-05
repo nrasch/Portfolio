@@ -15,27 +15,27 @@ try {
 
   require('../scripts_bootstrap.inc.php');
 
-  // Setup and checek counters
+  // Init vars and confirm args
   $offset = 0;
   $limit = 1000;
   $count = (int)Globals::$db->query("SELECT COUNT(*) FROM {$OPTIONS['t']}")->fetchColumn();
   if ($count <= 0 ) { throw new Exception("No rows in `{$OPTIONS['d']}`.`{$OPTIONS['t']}`"); }
 
-  // open the file
+  // Open the file to write the extracted data into
   $fh = fopen($OPTIONS['f'], 'ab');
   if (!$fh) { throw new Exception("Could not open {$OPTIONS['f']} for writing."); }
 
   do {
-    // We use an offset to prevent ram overage
+    // Utilize an offset to prevent running out of RAM on large extracts
     $stm = Globals::$db->query("SELECT * FROM {$OPTIONS['t']} LIMIT {$limit} OFFSET {$offset}");
     if (!$stm) { break; } // We don't have a valid statement
 
-    // loop through the records and output each to a line
+    // Loop through the records and output each to a line
     while ($row = $stm->fetch(PDO::FETCH_NUM)) {
       fwritecsv($fh, $row);
     }
 
-    // System protection from runaway script if the dump is huge
+    // System protection so the we don't have a run away script on large extracts
     usleep(200000);
   } while(($offset += $limit) < $count);
 
@@ -58,8 +58,8 @@ function fwritecsv($handle, $fields, $delimiter = ',', $enclosure = '"', $null =
   // Walk through the data array
   for ($i = 0, $n = count($fields); $i < $n; $i ++) {
     // Make sure the field data is compatible with output
-    if (is_bool($fields[$i])) { $fields[$i] = ($fields[$i] === 'true' ? 'TRUE' : 'FALSE'); } // convert Bools to string
-    if (is_null($fields[$i])) { $fields[$i] = $null; } // convert nulls to string
+    if (is_bool($fields[$i])) { $fields[$i] = ($fields[$i] === 'true' ? 'TRUE' : 'FALSE'); } // Convert Bools to string
+    if (is_null($fields[$i])) { $fields[$i] = $null; } // Convert nulls to string
     if (!is_scalar($fields[$i])) { $field[$i] = ''; } // Field is not a single value
 
     if (!is_numeric($fields[$i]) || $delimiter == '.' || strpos($fields[$i], $delimiter) !== false) {
