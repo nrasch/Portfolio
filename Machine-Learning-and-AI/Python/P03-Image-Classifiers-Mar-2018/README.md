@@ -26,7 +26,7 @@ This set of write-ups covers creating binary image classification systems utiliz
     * Continue to pave the way for further, more advanced optimizations
     
 
-* [Binary Image Classifier - Part Four (In progress)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
+* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
 
   * The objectives of this write-up include:
     * He initialization
