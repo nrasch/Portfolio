@@ -1,24 +1,24 @@
 ## Machine Learning
 
 ## Implementations in Python
-* [Python Development Environment Setup (Jan 2018 - 1,747 words)](./Python/P01-Python-Environment-Setup-Jan-2018)
-* [Image Dataset Creation - Part One (Feb 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
-* [Image Dataset Creation - Part Two (Mar 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
-* [Binary Image Classifier - Part One (Apr 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartOne.ipynb)
-* [Binary Image Classifier - Part Two (May 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartTwo.ipynb)
-* [Binary Image Classifier - Part Three (Jul 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
-* [Binary Image Classifier - Part Four (In progress)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
+* [Python Development Environment Setup](./Python/P01-Python-Environment-Setup-Jan-2018)
+* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
+* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
+* [Binary Image Classifier - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartOne.ipynb)
+* [Binary Image Classifier - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartTwo.ipynb)
+* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
+* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
 
 ## Implementations in R (and some Octave)
-* [Basic Graphing Examples (Nov 2017 - 1,952 words)](./R/Basic-Graphing-Nov-2017)
-* [Basic Linear Regression (Nov 2017 - 1,829 words)](./R/Basic-Linear-Regression-Nov-2017)
-* [Basic Logistic Regression (Nov 2017 - 1,158 words)](./R/Basic-Logistic-Regression-Nov-2017)
-* [Logistic Models Comparison (Dec 2017 - 5,679 words)](./R/Logistic-Models-Comparison-Dec-2017)
+* [Basic Graphing Examples (1,952 words)](./R/Basic-Graphing-Nov-2017)
+* [Basic Linear Regression (1,829 words)](./R/Basic-Linear-Regression-Nov-2017)
+* [Basic Logistic Regression (1,158 words)](./R/Basic-Logistic-Regression-Nov-2017)
+* [Logistic Models Comparison (5,679 words)](./R/Logistic-Models-Comparison-Dec-2017)
 * Recommender Systems
-  * [Introduction and Overview (Jan 2018 - 2,307 words)](./R/RS0-Recommender-Systems-Intro-Jan-2018)
-  * [Content Based Recommendations (Dec 2017 - 4,153 words)](./R/RS1-Content-Based-Recommendations-Dec-2017)
-  * [Memory Based Recommendations (Jan 2018 - 4,190 words)](./R/RS2-Memory-Based-Recommendations-Jan-2018)
-  * [Item Based Recommendations (Feb 2018 - 3,105 words)](./R/RS3-Item-Based-Recommendations-Jan-2018)
+  * [Introduction and Overview (2,307 words)](./R/RS0-Recommender-Systems-Intro-Jan-2018)
+  * [Content Based Recommendations (4,153 words)](./R/RS1-Content-Based-Recommendations-Dec-2017)
+  * [Memory Based Recommendations (4,190 words)](./R/RS2-Memory-Based-Recommendations-Jan-2018)
+  * [Item Based Recommendations (3,105 words)](./R/RS3-Item-Based-Recommendations-Jan-2018)
 
 ### What is “Machine Learning”?
 
@@ -76,21 +76,21 @@ The unsupervised learning problem would be setup to analyze student metric data 
 Once the unsupervised learning  model identified the student population clusters appropriate program tracks could be developed to target the groupings:  once to increase scholastic abilities for those with low reading and math scores, another track to focus on job finding and interviewing skills for the trade skill cluster of students, and so forth.
 
 ## Implementations in Python
-* [Python Development Environment Setup (Jan 2018 - 1,747 words)](./Python/P01-Python-Environment-Setup-Jan-2018)
-* [Image Dataset Creation - Part One (Feb 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
-* [Image Dataset Creation - Part Two (Mar 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
-* [Binary Image Classifier - Part One (Apr 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartOne.ipynb)
-* [Binary Image Classifier - Part Two (May 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartTwo.ipynb)
-* [Binary Image Classifier - Part Three (Jul 2018)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
-* [Binary Image Classifier - Part Four (In progress)](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
+* [Python Development Environment Setup](./Python/P01-Python-Environment-Setup-Jan-2018)
+* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
+* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
+* [Binary Image Classifier - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartOne.ipynb)
+* [Binary Image Classifier - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartTwo.ipynb)
+* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
+* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
 
 ## Implementations in R (and some Octave)
-* [Basic Graphing Examples (Nov 2017 - 1,952 words)](./R/Basic-Graphing-Nov-2017)
-* [Basic Linear Regression (Nov 2017 - 1,829 words)](./R/Basic-Linear-Regression-Nov-2017)
-* [Basic Logistic Regression (Nov 2017 - 1,158 words)](./R/Basic-Logistic-Regression-Nov-2017)
-* [Logistic Models Comparison (Dec 2017 - 5,679 words)](./R/Logistic-Models-Comparison-Dec-2017)
+* [Basic Graphing Examples (1,952 words)](./R/Basic-Graphing-Nov-2017)
+* [Basic Linear Regression (1,829 words)](./R/Basic-Linear-Regression-Nov-2017)
+* [Basic Logistic Regression (1,158 words)](./R/Basic-Logistic-Regression-Nov-2017)
+* [Logistic Models Comparison (5,679 words)](./R/Logistic-Models-Comparison-Dec-2017)
 * Recommender Systems
-  * [Introduction and Overview (Jan 2018 - 2,307 words)](./R/RS0-Recommender-Systems-Intro-Jan-2018)
-  * [Content Based Recommendations (Dec 2017 - 4,153 words)](./R/RS1-Content-Based-Recommendations-Dec-2017)
-  * [Memory Based Recommendations (Jan 2018 - 4,190 words)](./R/RS2-Memory-Based-Recommendations-Jan-2018)
-  * [Item Based Recommendations (Feb 2018 - 3,105 words)](./R/RS3-Item-Based-Recommendations-Jan-2018)
+  * [Introduction and Overview (2,307 words)](./R/RS0-Recommender-Systems-Intro-Jan-2018)
+  * [Content Based Recommendations (4,153 words)](./R/RS1-Content-Based-Recommendations-Dec-2017)
+  * [Memory Based Recommendations (4,190 words)](./R/RS2-Memory-Based-Recommendations-Jan-2018)
+  * [Item Based Recommendations (3,105 words)](./R/RS3-Item-Based-Recommendations-Jan-2018)
