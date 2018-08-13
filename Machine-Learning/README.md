@@ -1,26 +1,21 @@
 ## Machine Learning
 
-## Implementations in Python
-* [Python Development Environment Setup](./Python/01-ComputerVision-Environment-Setup)
-* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartOne.ipynb)
-* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartTwo.ipynb)
-* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartThree.ipynb)
-* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartFour.ipynb)
-* [Binary Image Classifier - Part Five](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartFive.ipynb)
-* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartSix.ipynb)
+## Python
+* Computer Vision
+    * [Environment Setup](./Python/01-ComputerVision-Environment-Setup)
+    * [Dataset Creation](./Python/02-ComputerVision-Dataset-Creation)
+    * [Classification Models](./Python/03-ComputerVision-Classification)
 
-## Implementations in R (and some Octave)
-* [Basic Graphing Examples (1,952 words)](./R/Basic-Graphing-Nov-2017)
-* [Basic Linear Regression (1,829 words)](./R/Basic-Linear-Regression-Nov-2017)
-* [Basic Logistic Regression (1,158 words)](./R/Basic-Logistic-Regression-Nov-2017)
-* [Logistic Models Comparison (5,679 words)](./R/Logistic-Models-Comparison-Dec-2017)
+
+## R (and some Octave)
+* [Graphing and Basic Models](./R)
 * Recommender Systems
-  * [Introduction and Overview (2,307 words)](./R/RS0-Recommender-Systems-Intro-Jan-2018)
-  * [Content Based Recommendations (4,153 words)](./R/RS1-Content-Based-Recommendations-Dec-2017)
-  * [Memory Based Recommendations (4,190 words)](./R/RS2-Memory-Based-Recommendations-Jan-2018)
-  * [Item Based Recommendations (3,105 words)](./R/RS3-Item-Based-Recommendations-Jan-2018)
+    * [Intr & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
+    * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
+    * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
+    * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
 
-### What is “Machine Learning”?
+### What is 'Machine Learning'?
 
 First, what exactly is machine learning?  Well, according to Wikipedia:
 
@@ -75,22 +70,17 @@ The unsupervised learning problem would be setup to analyze student metric data 
 
 Once the unsupervised learning  model identified the student population clusters appropriate program tracks could be developed to target the groupings:  once to increase scholastic abilities for those with low reading and math scores, another track to focus on job finding and interviewing skills for the trade skill cluster of students, and so forth.
 
-## Implementations in Python
-* [Python Development Environment Setup](./Python/01-ComputerVision-Environment-Setup)
-* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartOne.ipynb)
-* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartTwo.ipynb)
-* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartThree.ipynb)
-* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartFour.ipynb)
-* [Binary Image Classifier - Part Five](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartFive.ipynb)
-* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/BinaryImageClassifier-PartSix.ipynb)
+## Python
+* Computer Vision
+    * [Environment Setup](./Python/01-ComputerVision-Environment-Setup)
+    * [Dataset Creation](./Python/02-ComputerVision-Dataset-Creation)
+    * [Classification Models](./Python/03-ComputerVision-Classification)
 
-## Implementations in R (and some Octave)
-* [Basic Graphing Examples (1,952 words)](./R/Basic-Graphing-Nov-2017)
-* [Basic Linear Regression (1,829 words)](./R/Basic-Linear-Regression-Nov-2017)
-* [Basic Logistic Regression (1,158 words)](./R/Basic-Logistic-Regression-Nov-2017)
-* [Logistic Models Comparison (5,679 words)](./R/Logistic-Models-Comparison-Dec-2017)
+
+## R (and some Octave)
+* [Graphing and Basic Models](./R)
 * Recommender Systems
-  * [Introduction and Overview (2,307 words)](./R/RS0-Recommender-Systems-Intro-Jan-2018)
-  * [Content Based Recommendations (4,153 words)](./R/RS1-Content-Based-Recommendations-Dec-2017)
-  * [Memory Based Recommendations (4,190 words)](./R/RS2-Memory-Based-Recommendations-Jan-2018)
-  * [Item Based Recommendations (3,105 words)](./R/RS3-Item-Based-Recommendations-Jan-2018)
+    * [Intr & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
+    * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
+    * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
+    * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
