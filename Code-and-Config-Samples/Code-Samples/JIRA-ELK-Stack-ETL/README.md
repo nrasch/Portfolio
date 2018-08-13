@@ -25,7 +25,7 @@ Mission accomplished.  :)
 ### Final sample dashboard screenshot
 Below is a screenshot of one of the final metric dashboards that was created with the data:
 
-![Metric-Dashboard-Sample-1](https://github.com/nrasch/Portfolio/blob/jira-etl/System-Code-and-Config-Samples/Code-Samples/JIRA-ELK-Stack-ETL/Metric-Dashboard-Sample-1.png "Metric Dashboard Sample")
+![Metric-Dashboard-Sample-1](https://github.com/nrasch/Portfolio/blob/jira-etl/Code-and-Config-Samples/Code-Samples/JIRA-ELK-Stack-ETL/Metric-Dashboard-Sample-1.png "Metric Dashboard Sample")
 
 
 
