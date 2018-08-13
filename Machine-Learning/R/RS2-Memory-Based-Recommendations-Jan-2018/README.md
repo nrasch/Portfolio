@@ -43,7 +43,7 @@ library(ggplot2)
 
 # Load the processed MovieLens dataset
 # Assumes we have access to and can load the processed data files from the previous write-up
-# (../Machine-Learning-and-AI/R/RS1-Content-Based-Recommendations-Dec-2017)
+# (../Machine-Learning/R/RS1-Content-Based-Recommendations-Dec-2017)
 setwd("SOME_PATH_ON_YOUR_SYSTEM")
 movies = read.csv("./data/movies.csv")
 genreMatrix = as.matrix(read.table("./data/genreMatrix.txt", as.is = TRUE))

@@ -2,12 +2,12 @@
 
 ## Implementations in Python
 * [Python Development Environment Setup](./Python/P01-Python-Environment-Setup-Jan-2018)
-* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
-* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
-* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
-* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
-* [Binary Image Classifier - Part Five](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFive.ipynb)
-* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartSix.ipynb)
+* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
+* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
+* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
+* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
+* [Binary Image Classifier - Part Five](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFive.ipynb)
+* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartSix.ipynb)
 
 ## Implementations in R (and some Octave)
 * [Basic Graphing Examples (1,952 words)](./R/Basic-Graphing-Nov-2017)
@@ -77,12 +77,12 @@ Once the unsupervised learning  model identified the student population clusters
 
 ## Implementations in Python
 * [Python Development Environment Setup](./Python/P01-Python-Environment-Setup-Jan-2018)
-* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
-* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
-* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
-* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
-* [Binary Image Classifier - Part Five](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFive.ipynb)
-* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartSix.ipynb)
+* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartOne.ipynb)
+* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P02-Image-Dataset-Creation-Feb-2018/ImageDatasetCreation-PartTwo.ipynb)
+* [Binary Image Classifier - Part Three](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartThree.ipynb)
+* [Binary Image Classifier - Part Four](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFour.ipynb)
+* [Binary Image Classifier - Part Five](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartFive.ipynb)
+* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartSix.ipynb)
 
 ## Implementations in R (and some Octave)
 * [Basic Graphing Examples (1,952 words)](./R/Basic-Graphing-Nov-2017)
