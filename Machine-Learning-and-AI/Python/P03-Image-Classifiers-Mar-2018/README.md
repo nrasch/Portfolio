@@ -40,3 +40,7 @@ This set of write-ups covers creating binary image classification systems utiliz
   * The objectives of this write-up include:
     * Build an N-layer neural network utilizing TensorFlow that mirrors the functionality of the model in the previous write-up
 
+* [Binary Image Classifier - Part Six](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning-and-AI/Python/P03-Image-Classifiers-Mar-2018/BinaryImageClassifier-PartSix.ipynb)
+
+  * The objectives of this write-up include:
+    * Build an convolutional neural network (CNN) in Keras that processes the same data set previous models
