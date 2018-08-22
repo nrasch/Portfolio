@@ -12,7 +12,7 @@ EXAMPLES OF PAST PROJECTS:
 * Led a newly formed department in the design, development, and implementation of a new clinical data capture product that generated $2M in the first three quarters of operation
 * Designed and implemented ETL and analytics system collecting and aggregating gigabytes of clinical trial data from multiple sources into a single data repository
 * Worked on team utilizing Hadoop to map/reduce hundreds of gigabytes of data daily from major ISPs into single data source for stats team modeling
-* Developed a number of inventory control and estimation systems tied that fed directly into existing accounting software
+* Developed a number of inventory control and estimation systems tied that fed directly into existing accounting systems
 * Wrote ETL and frontend systems to aggregate multiple different government clinical trial databases into a searchable reporting system for trial clinician accreditation validation 
 * Developed ETL scripts to pull data from JIRA and load it into more sophisticated tools such as Elasticsearch and Kibana for reporting and metrics
 * Rapidly developed product/feature prototypes to explore new offerings and potential revenue streams

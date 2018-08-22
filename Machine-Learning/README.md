@@ -2,15 +2,15 @@
 
 ## Python
 * Computer Vision
-    * [Environment Setup](./Python/01-ComputerVision-Environment-Setup)
-    * [Dataset Creation](./Python/02-ComputerVision-Dataset-Creation)
-    * [Classification Models](./Python/03-ComputerVision-Classification)
-
-
+    * [Environment Setup (1 write-up)](./Python/01-ComputerVision-Environment-Setup)
+    * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
+    * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
+* [Predictive Modeling on Classic Datasets (3 write-ups)](./Python/04-Classic-Datasets)
+  
 ## R (and some Octave)
 * [Graphing and Basic Models](./R)
 * Recommender Systems
-    * [Intr & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
+    * [Intro & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
     * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
@@ -72,15 +72,17 @@ Once the unsupervised learning  model identified the student population clusters
 
 ## Python
 * Computer Vision
-    * [Environment Setup](./Python/01-ComputerVision-Environment-Setup)
-    * [Dataset Creation](./Python/02-ComputerVision-Dataset-Creation)
-    * [Classification Models](./Python/03-ComputerVision-Classification)
+    * [Environment Setup (1 write-up)](./Python/01-ComputerVision-Environment-Setup)
+    * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
+    * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
+* [Predictive Modeling on Classic Datasets (3 write-ups)](./Python/04-Classic-Datasets)
 
 
 ## R (and some Octave)
 * [Graphing and Basic Models](./R)
 * Recommender Systems
-    * [Intr & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
+    * [Intro & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
     * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
+
