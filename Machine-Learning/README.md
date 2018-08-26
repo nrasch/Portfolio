@@ -5,7 +5,7 @@
     * [Environment Setup (1 write-up)](./Python/01-ComputerVision-Environment-Setup)
     * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
     * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
-* [Predictive Modeling on Classic Datasets (3 write-ups)](./Python/04-Classic-Datasets)
+* [Predictive Modeling on Classic Datasets (5 write-ups)](./Python/04-Classic-Datasets)
   
 ## R (and some Octave)
 * [Graphing and Basic Models](./R)
