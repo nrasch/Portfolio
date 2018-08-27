@@ -10,4 +10,6 @@ This set of write-ups covers working through predictive modeling machine learnin
 
 * [Boston Housing Prices with Keras](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-02.Keras.1.ipynb)
 
+* [Boston Housing Prices with Keras](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-02.Keras.2.ipynb)
+
 * [Sonar, Mines vs. Rocks](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-03.ipynb)

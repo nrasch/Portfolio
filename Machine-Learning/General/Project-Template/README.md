@@ -165,5 +165,8 @@ print("Best score is {}".format(tree_cv.best_score_))
 
 # Final results
 
+# Environment
+`n_jobs = -1` means that the computation will be dispatched on all the CPUs of the computer.
+http://scikit-learn.org/stable/tutorial/statistical_inference/model_selection.html
 
 
