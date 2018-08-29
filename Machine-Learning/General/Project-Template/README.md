@@ -169,4 +169,8 @@ print("Best score is {}".format(tree_cv.best_score_))
 `n_jobs = -1` means that the computation will be dispatched on all the CPUs of the computer.
 http://scikit-learn.org/stable/tutorial/statistical_inference/model_selection.html
 
+Running a process remotely
+https://www.tecmint.com/keep-remote-ssh-sessions-running-after-disconnection/
+https://www.tecmint.com/tmux-to-access-multiple-linux-terminals-inside-a-single-console/
+
 
