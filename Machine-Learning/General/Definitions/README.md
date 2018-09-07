@@ -224,6 +224,15 @@ The P-Value for each linear regression term determines if the null hypothesis fo
 
 In the image above we are examining a logistic regression model summary in R for the Boston data set.  By examining the term P-Values that are less than 0.05--circled in green--we can determine which terms (i.e. explanatory variable) are statistically significant for predicting the response variable.
 
+# Breaking symmetry
+
+> During forward propagation each unit in hidden layer gets signal.  
+
+> That is, each hidden unit gets sum of inputs multiplied by the corresponding weight.
+
+> Now imagine that you initialize all weights to the same value (e.g. zero or one). In this case, each hidden unit will get exactly the same signal. E.g. if all weights are initialized to 1, each unit gets signal equal to sum of inputs (and outputs sigmoid(sum(inputs))). If all weights are zeros, which is even worse, every hidden unit will get zero signal. No matter what was the input - if all weights are the same, all units in hidden layer will be the same too.
+
+> This is the main issue with symmetry and reason why you should initialize weights randomly (or, at least, with different values).  Note, that this issue affects all architectures that use each-to-each connections.  [Source](https://stackoverflow.com/questions/20027598/why-should-weights-of-neural-networks-be-initialized-to-random-numbers)
 
 
 
