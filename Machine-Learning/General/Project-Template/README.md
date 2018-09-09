@@ -10,7 +10,7 @@ Some good public data sets:
 
 # Explore data
 
-Non-visual (should probaby put this into a table format...):
+Non-visual (should probably put this into a table format...):
 * View rows/columns 
 ```python
 data.shape
@@ -90,6 +90,10 @@ pyplot.show()
 
 ## Create train, validation, and test sets
 
+Standard test_train_split
+Downsampling
+Stratified Sampling 
+
 # Evaluate models
 
 Estimator selection decision graphs:
@@ -157,7 +161,8 @@ print("Best score is {}".format(tree_cv.best_score_))
 
 ### Graph performance
 
-
+Call backs
+TensorBoard
 
 ## Predictions
 
