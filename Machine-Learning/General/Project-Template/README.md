@@ -107,6 +107,9 @@ Estimator documentation:
 
 # Tune models
 
+## Transfer learning
+Is there a model out there that has already been trained we can utilize to speed things up?
+
 ## Hyperparameter tuning
 ### GridSearchCV
 ### RandomizedSearchCV 

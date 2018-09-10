@@ -6,6 +6,13 @@
     * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
     * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
 * [Predictive Modeling on Classic Datasets (6 write-ups)](./Python/04-Classic-Datasets)
+	* Iris (of course!)
+	* Boston housing prices
+	* Sonar, Mines vs. Rocks
+* [Reference Models](././Python/04-Reference-Models)
+	* Mostly written in TensorFlow - Saves me time having to look these things ups elsewhere
+* [Project template/ Checklist - **VERY** much a work in progress...](./General/Project-Template)
+
   
 ## R (and some Octave)
 * [Graphing and Basic Models](./R)
@@ -69,20 +76,3 @@ Example:  We want to create a new training program to increase the employability
 The unsupervised learning problem would be setup to analyze student metric data and output three clusters (which we would hope to match up to the three funded program tracks under development).  Perhaps one cluster seems to indicate we have a grouping of students with low reading and math scores, while another cluster indicates a grouping of individuals with trade skill backgrounds, and the third cluster might contain a grouping of some other demographical significant characteristic.
 
 Once the unsupervised learning  model identified the student population clusters appropriate program tracks could be developed to target the groupings:  once to increase scholastic abilities for those with low reading and math scores, another track to focus on job finding and interviewing skills for the trade skill cluster of students, and so forth.
-
-## Python
-* Computer Vision
-    * [Environment Setup (1 write-up)](./Python/01-ComputerVision-Environment-Setup)
-    * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
-    * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
-* [Predictive Modeling on Classic Datasets (6 write-ups)](./Python/04-Classic-Datasets)
-
-
-## R (and some Octave)
-* [Graphing and Basic Models](./R)
-* Recommender Systems
-    * [Intro & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
-    * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
-    * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
-    * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
-
