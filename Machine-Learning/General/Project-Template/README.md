@@ -94,6 +94,16 @@ Standard test_train_split
 Downsampling
 Stratified Sampling 
 
+# Create the model
+
+Good base defaults to start with:
+* Initialization: He initialization 
+* Activation function: ELU 
+* Normalization: Batch Normalization 
+* Regularization: Dropout 
+* Optimizer: Nesterov Accelerated Gradient 
+* Learning rate schedule: None 
+
 # Evaluate models
 
 Estimator selection decision graphs:
