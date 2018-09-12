@@ -9,8 +9,11 @@
 	* Iris (of course!)
 	* Boston housing prices
 	* Sonar, Mines vs. Rocks
-* [Reference Models](././Python/05-Reference-Models)
-	* Mostly written in TensorFlow - Saves me time having to look these things ups elsewhere
+* [Reference Models](./Python/05-Reference-Models)
+	* Mostly written in TensorFlow - Saves me time having to look these things up elsewhere
+      * Base model
+      * Model tuning (optimizers, regularization, initialization, transfer learning, etc.)
+      * TensorBoard
   
 ## R (and some Octave)
 * [Graphing and Basic Models](./R)
