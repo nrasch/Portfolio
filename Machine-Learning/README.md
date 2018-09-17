@@ -5,10 +5,11 @@
     * [Environment Setup (1 write-up)](./Python/01-ComputerVision-Environment-Setup)
     * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
     * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
-* [Predictive Modeling on Classic Datasets (6 write-ups)](./Python/04-Classic-Datasets)
+* [Predictive Modeling on Classic Datasets (7 write-ups)](./Python/04-Classic-Datasets)
 	* Iris (of course!)
 	* Boston housing prices
 	* Sonar, Mines vs. Rocks
+    * Student Alcohol Consumption
 * [Reference Models](./Python/05-Reference-Models)
 	* Mostly written in TensorFlow - Saves me time having to look these things up elsewhere
       * Base model
