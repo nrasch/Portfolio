@@ -15,3 +15,5 @@ This set of write-ups covers working through predictive modeling machine learnin
 * [Sonar, Mines vs. Rocks](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-03.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn
 
 * [Student Alcohol Consumption](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-04.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn as well as neural network implementation with TensorFlow
+
+* [MNIST Image Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-05.ipynb) - Image classification modeling with Long Short Term Memory (LSTM) networks and TensorFlow
