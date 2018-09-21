@@ -1,79 +1,81 @@
-## Machine Learning
+# Machine Learning
 
 ## Python
-* Computer Vision
-    * [Environment Setup (1 write-up)](./Python/01-ComputerVision-Environment-Setup)
-    * [Dataset Creation (2 write-ups)](./Python/02-ComputerVision-Dataset-Creation)
-    * [Classification Models (6 write-ups)](./Python/03-ComputerVision-Classification)
-* [Predictive Modeling on Classic Datasets (6 write-ups)](./Python/04-Classic-Datasets)
-	* Iris (of course!)
-	* Boston housing prices
-	* Sonar, Mines vs. Rocks
-* [Reference Models](./Python/05-Reference-Models)
-	* Mostly written in TensorFlow - Saves me time having to look these things up elsewhere
-      * Base model
-      * Model tuning (optimizers, regularization, initialization, transfer learning, etc.)
-      * TensorBoard
+
+### Development environment setup
+
+* [Development environment setup](./Python/01-ComputerVision-Environment-Setup)
+
+
+### Computer vision - Data set creation
+
+This set of write-ups covers creating a dataset of images suitable for use in future machine learning projects.
+
+* [Image Dataset Creation - Part One](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartOne.ipynb)
   
-## R (and some Octave)
+  * The objectives of this write-up include:
+    * Find and acquire a suitable set of images
+    * Process a small subset of images as a proof of concept for the image dataset creation process
+    * Output a portable binary data container containing the subset of processed images
+
+* [Image Dataset Creation - Part Two](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartTwo.ipynb)
+
+	* Implementation of the prototype and ideas developed in [part one](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/02-ComputerVision-Dataset-Creation/ImageDatasetCreation-PartOne.ipynb)
+
+### Computer vision - Image classification
+
+This set of write-ups covers creating image classification models from scratch, in TensforFlow, and in Keras.  The Jupyter notebooks for each model are listed below:
+
+* [Basic logistic regression model from scratch](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-01.ipynb)
+* [Shallow neural network from scratch](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-02.ipynb)
+* [N-layer neural network from scratch](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-03.ipynb)
+* [N-layer neural network optimizations from scratch](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-04.ipynb)
+* [TensforFlow baseline](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-05.ipynb)
+* [Keras baseline](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-06.ipynb)
+
+
+### Reference models
+
+A set of reference models (mostly in TensorFlow), that saves me a lot of time having to look these things up...  ;)
+
+* [Base neural network](./DNN-TensorFlow-Base.ipynb) - A very basic 2 layer neural network [TensorFlow] 
+
+* [Training deeper neural networks](./DNN-TensorFlow-Training.ipynb) - Implementations for training deeper neural networks [TensorFlow]
+  - Vanishing/Exploding Gradients
+  - Non-saturating Activation Functions
+  - Transfer Learning
+  - Optimizers
+  - Regularization
+  
+* [TensorBoard](./DNN-TensorBoard.ipynb) - Implementing TensorBoard to understand, debug, and optimize TensorFlow models
+
+
+### Classic data sets
+
+This set of write-ups covers working through predictive modeling machine learning problems using classic datasets.  The Jupyter notebooks for each model are listed below:
+
+* [Iris Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-01.ipynb) - Classification with Scikit-Learn
+
+* [Iris Classification with Keras](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-01.Keras.1.ipynb) - Neural network classification with Keras
+
+* [Boston Housing Prices](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-02.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn
+
+* [Boston Housing Prices with Keras](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-02.Keras.1.ipynb) - Neural network regression modeling with Keras and GridSearchCV
+
+* [Boston Housing Prices with Keras](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-02.Keras.2.ipynb) - Neural network regression modeling with Keras and RandomizedSearchCV
+
+* [Sonar, Mines vs. Rocks](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-03.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn
+
+* [Student Alcohol Consumption](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-04.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn as well as neural network implementation with TensorFlow
+
+* [MNIST Image Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-05.ipynb) - Image classification modeling with Long Short Term Memory (LSTM) networks and TensorFlow
+
+
+## R (with some Octave)
+
 * [Graphing and Basic Models](./R)
 * Recommender Systems
     * [Intro & Overview](./R/RS0-Recommender-Systems-Intro-Jan-2018)
     * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
-
-### What is 'Machine Learning'?
-
-First, what exactly is machine learning?  Well, according to Wikipedia:
-
-*Machine learning gives computers the ability to learn without being explicitly programmed (Arthur Samuel, 1959).  It is a subfield of computer science.*
-
-*The idea came from work in artificial intelligence.  Machine learning explores the study and construction of algorithms which can learn and make predictions on data.  Such algorithms follow programmed instructions, but can also make predictions or decisions based on data.  They build a model from sample inputs.*
-
-*Machine learning is done where designing and programming explicit algorithms cannot be done. Examples include spam filtering, detection of network intruders or malicious insiders working toward a data breach, optical character recognition (OCR), search engines and computer vision.*
-
-*<https://simple.wikipedia.org/wiki/Machine_learning>*
-
-Additionally, machine learning (ML) usually has two principal areas of activity: Supervised learning and unsupervised learning.  Let’s review these areas in an attempt to flesh out and better understand concretely the definition above.
-
-### Supervised Learning
-
-In a nutshell supervised learning entails providing the computer with a number of inputs and known outputs, and then asking the computer to create a model than can make predictions about new inputs it hasn't seen before.  (Usually the more examples the computer is given the better the predictive model created will be.)
-
-Example:  A nonprofit creates an educational training program to increase the employability of a hard-to-serve population.  The nonprofit collects various data points on each set of students that pass through the program, and then follows up to record post-graduation employment metrics.
-
-In this example the inputs for supervised learning would be the training program curriculum, time spent in the classroom vs. hands-on labs, the student-to-teacher ratio, etc.
-
-The outputs for the supervised learning would be the change in the student's post-graduation employment rate, salary, etc.
-
-The goal of the supervised learning problem for this example would be to end up with a model that could predict how successful attendees of the program would be based the configuration of the inputs.  For example, if the student-to-teacher ratio and number of hands-on labs (i.e. inputs) were modified, what would the supervised learning model predict would be the impact on graduates of the program finding meaningful employment (i.e. the output)?  Which inputs could be altered to have the greatest, positive impact on the desired output? 
-
-Next, supervised learning problems are often categorized into "regression" and "classification" problems.  
-
-#### Regression
-
-When dealing with regression we want to create a model that can predict what the output values (i.e. change in employment rate) would be based on the input values (i.e. student-to-teacher ratio).  
-
-Example:  If we had a 20:1 student-to-teacher ratio what would be the predicted change in the employment rate for individuals completing our program?  What would happen if we modified the ratio to 10:1?
-
-#### Classification
-
-Classification on the other hand deals with creating a model that will output a categorical prediction based on input values.  
-
-Example:  We create three categories for our students to gauge their post-program success rate:  High, Medium, and Low.  As we alter various facets of the program (i.e. student-to-teacher ratio) which kind of post-program success rate will our model predict for that program configuration?  High, medium, or low?
-
-#### Summary
-
-As a rule of thumb:  Regression provides a hard number (i.e. a 20% increase in employment) while classification returns a category (i.e. medium).
-
-### Unsupervised Learning
-In supervised learning we were able to show the computer many examples where we knew what the output looked like based on the various inputs.  We could then take any predictive model created by the computer and run our known data through it, and then compare the supervised learning's predictions against what actually happened and ensure sane results were being generated.
-
-In contrast, unsupervised learning allows us to explore data where we don't have a known set of outputs.  We want to explore the data organically and look for structures that might exist.  The computer doesn't have a "right" answer for a prediction; it attempts to create relationships based on the values of the inputs. 
-
-Example:  We want to create a new training program to increase the employability of a hard-to-serve population.  We have enough funds to create three different program tracks, and we have a dataset containing information about our potential student body.  (The dataset might include various metrics such as education level, scholastic scores, known trade skills, and so forth.)  We'd like to utilize unsupervised learning to look for natural groupings (also called "clusters") in the potential student population, and then tailor each of the three program tracks to a cluster found through the unsupervised learning process.
-
-The unsupervised learning problem would be setup to analyze student metric data and output three clusters (which we would hope to match up to the three funded program tracks under development).  Perhaps one cluster seems to indicate we have a grouping of students with low reading and math scores, while another cluster indicates a grouping of individuals with trade skill backgrounds, and the third cluster might contain a grouping of some other demographical significant characteristic.
-
-Once the unsupervised learning  model identified the student population clusters appropriate program tracks could be developed to target the groupings:  once to increase scholastic abilities for those with low reading and math scores, another track to focus on job finding and interviewing skills for the trade skill cluster of students, and so forth.

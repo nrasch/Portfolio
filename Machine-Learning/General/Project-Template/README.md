@@ -94,6 +94,16 @@ Standard test_train_split
 Downsampling
 Stratified Sampling 
 
+# Create the model
+
+Good base defaults to start with:
+* Initialization: He initialization 
+* Activation function: ELU 
+* Normalization: Batch Normalization 
+* Regularization: Dropout 
+* Optimizer: Nesterov Accelerated Gradient 
+* Learning rate schedule: None 
+
 # Evaluate models
 
 Estimator selection decision graphs:
@@ -106,6 +116,9 @@ Estimator documentation:
 * http://scikit-learn.org/stable/user_guide.html#user-guide
 
 # Tune models
+
+## Transfer learning
+Is there a model out there that has already been trained we can utilize to speed things up?
 
 ## Hyperparameter tuning
 ### GridSearchCV
