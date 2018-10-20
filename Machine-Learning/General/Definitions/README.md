@@ -275,11 +275,41 @@ Bagging is an [ensemble method]() that attempts to apply the [Boostrap Method]()
 
 Bagging is typically implemented as:
 1. Create N number of random sub-samples of the data set with replacement
-2. Train N number of a given model on each sub-sample
-3. Given an unseen data set calculate the average prediction from each of the N trained models
+2. Train N number of a given model on each sub-sample in parallel
+3. Given an unseen data set calculate the average prediction from each of the N trained models (i.e. majority vote)
 
 Because predictions are being averaged from multiple models overfitting is mitigated which results in lower variance.  [Stability]() also increases, because the impact of input variance on any single model is diluted when combined with the outputs of the overall collection of models.
 
+# Boosting
+
+Boosting is an [ensemble method]() that attempts to apply the [Boostrap Method]() to a collection of high-variance machine learning models in order to obtain a set of more accurate predictions that any single model instance would achieve on its own.
+
+Boosting may suffer; however, from bias issues.  A model that can't fit the data is unlikely to do better if more copies of that model are added to the process.
+
+##### Training
+Boosting is typically implemented as:
+1. Create an initial random sub-sample of the data set with replacement
+2. Train an instance of the boosting model on the initial sub-sample
+3. Apply weights to the observations in the sub-sample that were misclassified (i.e. the model spends more time on 'hard' problems)
+4. Apply a weight to the model itself based on its overall performance
+
+Next:
+1. Create another random sub-sample of the now weighted data set with replacement
+2. Train an instance of the boosting model on the weighted sub-sample
+3. Apply/update weights to the observations in the sub-sample that were misclassified (i.e. the model spends more time on 'hard' problems)
+4. Apply a weight to the model itself based on its overall performance
+
+This process then repeats N number of times or until a desired level of performance is reached.
+
+##### Predictions
+Similar to [Bagging]() the N number of models are applied against unseen data.  However, each model's input is tempered by the weight assigned to it during the training process.  This means more effective models with have a higher influence on the final vote of the combined models outputs.
+
+##### Pruning
+Some algorithms (AdaBoost for example) will drop individual models that do not meet a certain performance threshold (50% for example).
+
+Because less effective models are given low weights or removed altogether Boosting may mitigate bias issues.  [Stability]() also increases, because the impact of input variance on any single model is diluted when combined with the outputs of the overall collection of models.
+
+Boosting may suffer; however, from variance issues.  Removing or lowering the weights on particular models in the group decreases the group's solution set generalization.
 
 
 
