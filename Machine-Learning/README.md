@@ -38,16 +38,16 @@ This set of write-ups covers creating image classification models from scratch, 
 
 A set of reference models (mostly in TensorFlow), that saves me a lot of time having to look these things up...  ;)
 
-* [Base neural network](./DNN-TensorFlow-Base.ipynb) - A very basic 2 layer neural network [TensorFlow] 
+* [Base neural network](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/05-Reference-Models/DNN-TensorFlow-Base.ipynb) - A very basic 2 layer neural network [TensorFlow] 
 
-* [Training deeper neural networks](./DNN-TensorFlow-Training.ipynb) - Implementations for training deeper neural networks [TensorFlow]
+* [Training deeper neural networks](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/05-Reference-Models/DNN-TensorFlow-Training.ipynb) - Implementations for training deeper neural networks [TensorFlow]
   - Vanishing/Exploding Gradients
   - Non-saturating Activation Functions
   - Transfer Learning
   - Optimizers
   - Regularization
   
-* [TensorBoard](./DNN-TensorBoard.ipynb) - Implementing TensorBoard to understand, debug, and optimize TensorFlow models
+* [TensorBoard](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/05-Reference-Models/DNN-TensorBoard.ipynb) - Implementing TensorBoard to understand, debug, and optimize TensorFlow models
 
 
 ### Classic data sets
@@ -66,10 +66,13 @@ This set of write-ups covers working through predictive modeling machine learnin
 
 * [Sonar, Mines vs. Rocks](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-03.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn
 
-* [Student Alcohol Consumption](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-04.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn as well as neural network implementation with TensorFlow
+* [Student Alcohol Consumption](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-04.ipynb) - Linear and non-linear algorithm regression modeling with Scikit-Learn as well as a neural network implementation with TensorFlow
 
 * [MNIST Image Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-05.ipynb) - Image classification modeling with Long Short Term Memory (LSTM) networks and TensorFlow
 
+* [IMDB Movie Review Sentiment Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-06.ipynb) - Movie review classification modeling using natural language processing, Scikit-Learn, and bag-of-words
+
+* [IMDB Movie Review Sentiment Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-06.p2.ipynb) - Movie review classification modeling using natural language processing, Scikit-Learn, and bag-of-words on a sparse feature set
 
 ## R (with some Octave)
 
@@ -79,3 +82,11 @@ This set of write-ups covers working through predictive modeling machine learnin
     * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
+
+
+## Other Items
+
+### Works in Progress
+
+* [Definitions](./General/Definitions/README.md)
+* [Project Template - VERY rough draft](./General/Project-Template/README.md)

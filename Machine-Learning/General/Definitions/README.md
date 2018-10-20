@@ -235,6 +235,89 @@ In the image above we are examining a logistic regression model summary in R for
 > This is the main issue with symmetry and reason why you should initialize weights randomly (or, at least, with different values).  Note, that this issue affects all architectures that use each-to-each connections.  [Source](https://stackoverflow.com/questions/20027598/why-should-weights-of-neural-networks-be-initialized-to-random-numbers)
 
 
+# Stability (learning theory)
+
+In short stability is the ability of a model to resist changes to its functioning by small changes in its inputs.
+
+> Stability, also known as algorithmic stability, is a notion in computational learning theory of how a machine learning algorithm is perturbed by small changes to its inputs. A stable learning algorithm is one for which the prediction does not change much when the training data is modified slightly. For instance, consider a machine learning algorithm that is being trained to recognize handwritten letters of the alphabet, using 1000 examples of handwritten letters and their labels ("A" to "Z") as a training set. One way to modify this training set is to leave out an example, so that only 999 examples of handwritten letters and their labels are available. A stable learning algorithm would produce a similar classifier with both the 1000-element and 999-element training sets.
+
+> Stability can be studied for many types of learning problems, from language learning to inverse problems in physics and engineering, as it is a property of the learning process rather than the type of information being learned. The study of stability gained importance in computational learning theory in the 2000s when it was shown to have a connection with generalization. It was shown that for large classes of learning algorithms, notably empirical risk minimization algorithms, certain types of stability ensure good generalization.  [Source](https://en.wikipedia.org/wiki/Stability_(learning_theory))
+
+# Ensemble techniques/methods
+
+An ensemble technique/method (ET) is taking a set of weak learners and combining them to create a stronger learner that obtains better performance than a single learning would on its own. 
+
+Or, as the Sci-kit Learn documentation states:
+> The goal of ensemble methods is to combine the predictions of several base estimators built with a given learning algorithm in order to improve generalizability / robustness over a single estimator.
+
+The learners in the ET are of the same type, and combining them helps to minimize noise, bias, and variance issues.  (Note that if different learning models are combined in the ET this is called `stacking` which will be covered seperatly.)
+
+[XGBoost](https://xgboost.readthedocs.io/en/latest/) for example incorporates this idea into its architecture.
+
+[Sci-kit Learn](http://scikit-learn.org/stable/modules/ensemble.html) contains a number of ensemble methods 'out of the box' such as:
+* Bagging methods
+* Forests of randomized trees
+* AdaBoost
+* Gradient Tree Boosting
+* Etc.
+
+
+# The Boostrap Method
+
+The Boostrap Method involves taking a random number of sub-samples from a population with replacement, calculating some statistic on that sub-sample, repeating this N number of times, and then calculating the average of all the collected statistics.
+
+The idea is to minimize the variation in the samples and bring the calculated static close to the true value for the population as a whole.
+
+
+# Bootstrap Aggregation (Bagging)
+
+Bagging is an [ensemble method]() that attempts to apply the [Boostrap Method]() to a collection of high-variance machine learning models in order to obtain a set of more accurate predictions that any single model instance would achieve on its own.
+
+Bagging is typically implemented as:
+1. Create N number of random sub-samples of the data set with replacement
+2. Train N number of a given model on each sub-sample in parallel
+3. Given an unseen data set calculate the average prediction from each of the N trained models (i.e. majority vote)
+
+Because predictions are being averaged from multiple models overfitting is mitigated which results in lower variance.  [Stability]() also increases, because the impact of input variance on any single model is diluted when combined with the outputs of the overall collection of models.
+
+# Boosting
+
+Boosting is an [ensemble method]() that attempts to apply the [Boostrap Method]() to a collection of high-variance machine learning models in order to obtain a set of more accurate predictions that any single model instance would achieve on its own.
+
+Boosting may suffer; however, from bias issues.  A model that can't fit the data is unlikely to do better if more copies of that model are added to the process.
+
+##### Training
+Boosting is typically implemented as:
+1. Create an initial random sub-sample of the data set with replacement
+2. Train an instance of the boosting model on the initial sub-sample
+3. Apply weights to the observations in the sub-sample that were misclassified (i.e. the model spends more time on 'hard' problems)
+4. Apply a weight to the model itself based on its overall performance
+
+Next:
+1. Create another random sub-sample of the now weighted data set with replacement
+2. Train an instance of the boosting model on the weighted sub-sample
+3. Apply/update weights to the observations in the sub-sample that were misclassified (i.e. the model spends more time on 'hard' problems)
+4. Apply a weight to the model itself based on its overall performance
+
+This process then repeats N number of times or until a desired level of performance is reached.
+
+##### Predictions
+Similar to [Bagging]() the N number of models are applied against unseen data.  However, each model's input is tempered by the weight assigned to it during the training process.  This means more effective models with have a higher influence on the final vote of the combined models outputs.
+
+##### Pruning
+Some algorithms (AdaBoost for example) will drop individual models that do not meet a certain performance threshold (50% for example).
+
+Because less effective models are given low weights or removed altogether Boosting may mitigate bias issues.  [Stability]() also increases, because the impact of input variance on any single model is diluted when combined with the outputs of the overall collection of models.
+
+Boosting may suffer; however, from variance issues.  Removing or lowering the weights on particular models in the group decreases the group's solution set generalization.
+
+
+
+  
+
+
+
+
 
 
 
