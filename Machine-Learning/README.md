@@ -74,6 +74,8 @@ This set of write-ups covers working through predictive modeling machine learnin
 
 * [IMDB Movie Review Sentiment Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-06.p2.ipynb) - Movie review classification modeling using natural language processing, Scikit-Learn, and bag-of-words on a sparse feature set
 
+* [IMDB Movie Review Sentiment Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/Model-06.p3.ipynb) - Movie review classification modeling using natural language processing, Word2Vec, and Scikit-Learn on a feature set of centroids
+
 ## R (with some Octave)
 
 * [Graphing and Basic Models](./R)
