@@ -12,7 +12,7 @@ The whole thing was kicked by the following `crontab` entry:
 
 ## export_processor.sh
 
-The `export_processor.sh' was in charge of processing all the export requests submitted to the system in the GUI.  First it created a `pid` file so we wouldn't have multiple copies running, and then it managed the contents of the `exports` table which tracked all the jobs.  You can see in the code where it moves the jobs through the process and updates each job status.
+The `export_processor.sh` was in charge of processing all the export requests submitted to the system in the GUI.  First it created a `pid` file so we wouldn't have multiple copies running, and then it managed the contents of the `exports` table which tracked all the jobs.  You can see in the code where it moves the jobs through the process and updates each job status.
 
 Example of a job being marked as in progress:
 ```bash

@@ -14,7 +14,7 @@ Mission accomplished.  :)
 ### A few tools I utilized
 * In order to pull the data out of JIRA I utilized a JIRA Command Line Interface (CLI), which can be found [here](https://marketplace.atlassian.com/plugins/org.swift.jira.cli/versions)
 * You can also find a number of examples of how to utilize the JIRA CLI [here](https://bobswift.atlassian.net/wiki/display/JCLI/Examples)
-* I also needed to parse the CSV file the CLI would return, so I used an old standby [PHP CSV library](http://csv.thephpleague.com/)
+* I also needed to parse the CSV file the CLI would return, so I used the [PHP CSV library](http://csv.thephpleague.com/) which I'd had previous experience with.
 
 ### The flow
 + Init the process by calling 'importBulkDataScript.sh'
@@ -25,7 +25,7 @@ Mission accomplished.  :)
 ### Final sample dashboard screenshot
 Below is a screenshot of one of the final metric dashboards that was created with the data:
 
-![Metric-Dashboard-Sample-1](https://github.com/nrasch/Portfolio/blob/jira-etl/Code-and-Config-Samples/Code-Samples/JIRA-ELK-Stack-ETL/Metric-Dashboard-Sample-1.png "Metric Dashboard Sample")
+![Metric-Dashboard-Sample-1](./Metric-Dashboard-Sample-1.png)
 
 
 
