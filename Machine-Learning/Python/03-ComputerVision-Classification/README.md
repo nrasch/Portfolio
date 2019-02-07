@@ -8,3 +8,4 @@ This set of write-ups covers creating image classification models from scratch, 
 * [N-layer neural network optimizations from scratch](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-04.ipynb)
 * [TensforFlow baseline](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-05.ipynb)
 * [Keras baseline](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-06.ipynb)
+* [Kaggle Dog Breed Identification Challenge - ResNet34](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Machine-Learning/Python/03-ComputerVision-Classification/DogBreeds.ipynb)
