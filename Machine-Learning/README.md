@@ -90,7 +90,8 @@ This set of write-ups covers working through predictive modeling machine learnin
     * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
-
+* Labs
+    * [Linear Regression Lab - Advertising Data](./R/Labs/Linear Regression Lab - Advertising Data.nb.html)
 
 ## Other Items
 
