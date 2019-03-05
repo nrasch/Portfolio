@@ -92,6 +92,7 @@ This set of write-ups covers working through predictive modeling machine learnin
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
 * Labs
     * [Linear Regression Lab - Advertising Data](./R/Labs/Linear Regression Lab - Advertising Data.nb.html)
+    * [Linear Regression Lab - Auto Data - IN PROGRESS](./R/Labs/Linear Regression Lab - Auto Data.nb.html)
 
 ## Other Items
 
