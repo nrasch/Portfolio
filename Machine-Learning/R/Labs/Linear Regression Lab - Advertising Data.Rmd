@@ -1,0 +1,384 @@
+---
+title: "Linear Regression - Advertising Data"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+# Set defaults for notebook
+```{r}
+setHook("plot.new", function() par(col = "blue", pch = '+'))
+```
+
+---
+# Load the data
+```{r}
+data = read.csv("Advertising.csv")
+```
+
+```{r}
+attach(data)
+names(data)
+```
+
+```{r}
+dim(data)
+```
+
+---
+# Examine the data
+```{r}
+head(data, 5)
+```
+
+```{r}
+summary(data[, -1])
+```
+
+---
+# 3.1 Simple Linear Regression
+
+## Examine relationship
+```{r}
+plot(TV, sales)
+```
+## Regress sales onto TV
+```{r}
+lr.fit = lm(sales~TV)
+```
+
+## 3.1.1 Estimating the Coefficients
+
+We must use data to estimate the coefficients:
+```{r}
+lr.fit
+```
+
+So in this case we only have one set of coefficients, TV.  According to this approximation, an additional $1,000 spent on TV advertising is associated with selling approximately 47.5 additional units of the product.
+
+We want to find an intercept $\hat{??_0}$ and a slope $\hat{??_1}$ such that the resulting line is as close as possible to the n = 200 data points.  There are a number of ways of measuring closeness. However, by far the most common approach involves *minimizing* the least squares criterion.
+
+## Residual sum of squares (RSS)
+
+Residuals:  This is the difference between the ith observed response value and the ith response value that is predicted by our linear model.  It is given by:
+${e_i} = {y_i} - \hat{y_i}$
+
+If we add and square the residuals we get the *residual sum of squares* (RSS) which is given by:
+$RSS = {e^2_1} + {e^2_2} + ... + {e^2_n}$
+
+The least squares approach chooses $\hat{??_0}$ and $\hat{??_1}$ to *minimize* the RSS.
+
+Once the model is fit we can graph the RSS values for each data point:
+```{r}
+{
+  plot(sales, lr.fit$residuals)
+}
+```
+
+We can also view the RSS differences between the actual values and the predicted values:
+```{r}
+{
+  # Actual values
+  plot(TV, sales, pch = 19, col = 'red')
+  
+  # Least squares regression line
+  abline(lr.fit, lwd = 2)
+  
+  # Collect and round the residual values
+  res = signif(residuals(lr.fit), 5)
+  
+  # Create predictions with the fitted model
+  pre <- predict(lr.fit)
+  
+  # Draw line segments between pairs of points.
+  segments(TV, sales, TV, pre, col="gray")
+}
+```
+
+we can see in both graphs that as the spending on TV increases the models is less able to predict correct sales values.
+
+(This can also be done with ggplot2; article [here](https://drsimonj.svbtle.com/visualising-residuals))
+
+---
+## Standard Error (SE) and Residual Standard Error (RSE)
+
+### SE
+
+If we take a sample of the population, perform linear regression, and then take the sample mean, $\hat\mu$, how accurate is that sample mean $\hat\mu$ as an estimate of populaton mean, $\mu$?
+
+The formula is:
+
+$Var(\hat\mu) = SE(\hat\mu)^2 = \sigma/n$,
+
+where $\sigma$ is the standard deviation of each of the realizations $y_i$ of $Y$.
+
+(Calculation standard deviation:  https://revisionmaths.com/gcse-maths-revision/statistics-handling-data/standard-deviation)
+
+Roughly speaking, the standard error tells us the average amount that this estimate $\hat\mu$ differs from the actual value of $\mu$.
+
+### RSE 
+
+The estimate of $\sigma$ is known as the *residual standard error* (RSE), and is given by the formula $RSE = \sqrt{\frac{RSS}{{n}???{2}}}$.  Roughly speaking, it is the average amount that the response will deviate from the true regression line. 
+
+We can view the model's RSE using the `summary` command:
+```{r}
+{
+  print('RSE:')
+  print(summary(lr.fit)$sigma)
+}
+```
+
+In other words, actual sales in each market deviate from the true regression line by approximately 3,260 units, on average.
+
+The RSE is considered a measure of the lack of fit of the model to the data.  The smaller the RSE value is then the better the model fits the data.
+
+---
+## Confidence Intervals
+
+Standard errors can be used to compute confidence intervals. A 95% confidence confidence interval is defined as a range of values such that with 95% probability, the range will contain the true unknown value of the parameter.
+```{r}
+signif(confint(lr.fit), 4)
+```
+
+In the case of the advertising data, the 95% confidence interval for $\beta_0$ is [6.130, 7.935] and the 95% confidence interval for $\beta_1$ is [0.042, 0.053].
+
+Therefore, we can conclude that in the absence of any advertising, sales will, on average, fall somewhere between 6,130 and 7,940 units. Furthermore, for each $1,000 increase in television advertising, there will be an average increase in sales of between 42 and 53 units.
+
+For additional information on confidence and prediction intervals for new, unseen data:  http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
+
+
+---
+## Hypothesis Tests, T-Statistic, and P-Values
+
+Standard errors can also be used to perform hypothesis tests on the hypothesis coefficients.
+
+$H_0$ : There is no relationship between $X$ and $Y$
+
+$H_a$ : There is some relationship between $X$ and $Y$
+
+Mathematically, this corresponds to testing
+
+$H_0$ : $\beta_1 = 0$
+
+$H_a$ : $\beta_1 \neq 0$
+
+
+In order to test the hypothesis we can utilize the `t-statistic` and the `p-value` which utilize the `standard error` in their computations.  We want the `t-statistic` to be *large* and the `p-value` to be *small*.
+
+Typical p-value cutoffs for rejecting the null hypothesis are 5 or 1%. When n = 30, these correspond to t-statistics of around 2 and 2.75, respectively.
+
+
+```{r}
+signif(summary(lr.fit)$coefficients, 2)
+```
+
+As seen above we have a large `t-statistic` value and a small `p-value` ( < .05 ), so we reject the null hypothesis--that is, we declare a relationship to exist between TV advertising and sales.
+
+---
+## 3.1.3 Assessing the Accuracy of the Model
+
+Once the null hypothesis has been rejected to what extent does the model fit the data?
+
+### Residual Standard Error (RSE)
+
+Covered above; provides an absolute measure of lack of fit of the model to the data.
+
+### $R^2$ Statistic
+
+The $R^2$ statistic is a measure of the linear relationship between X and Y.  It provides an alternative measure of fit. It takes the form of a proportion-the proportion of variance explained-and so it always takes on a value between 0 and 1, and is independent of the scale of Y.  
+
+An $R^2$ statistic that is close to 1 indicates that a large proportion of the variability in the response has been explained by the regression. A number near 0 indicates that the regression did not explain much of the variability in the response; this might occur because the linear model is wrong, or the inherent error $\sigma^2$ is high, or both.
+
+In the summary statement below $R^2$ is 0.61, and so just under two-thirds of the variability in sales is explained by a linear regression on TV.
+
+```{r}
+summary(lr.fit)$r.squared
+```
+
+---
+# 3.2 Multiple Linear Regression
+
+```{r}
+fit = lm(sales~ TV + radio + newspaper, data = data)
+```
+```{r}
+summary(fit)
+```
+
+## Non-linearity of the Data
+
+```{r}
+plot(fit)
+```
+
+*Plot graph:*  `Residuals vs Fitted` 
+
+Ideally, the `Residuals vs Fitted` plot won't have any discernible patterns.  If there is a pattern--such as a 'U' shape for example--its presence may indicate a problem with some aspect of the linear model.  In the example above we can see a 'U' shape in the residuals plot, and so later on we'll add an interaction term to deal with this.
+
+
+## F-Statistic
+
+As before with linear regression we can test the null hypothesis:
+
+
+$H_0$ : $\beta_1$ = $\beta_2$ + ... + $\beta_p = 0$
+
+vs. the alternative:
+
+$H_a$ : at least one $\beta_j \neq 0$
+
+
+When there is no relationship between the response and predictors, we expect the F-statistic to take on a value close to 1. However if $H_a$ is true we expect F to be
+greater than 1.
+
+Above we can see the F-statistic is 570.3 much greater than one.  This provides compelling evidence against the null hypothesis $H_0$.  Next we examine the `p-value` for the F-statistic to determine if the F-statistic is large enough to reject the null hypothesis, $H_0$.  The F-statistic's p-value is 2.2e-16, so we have extremely strong evidence that at least one of the media is associated with increased sales.
+
+## Model Fit
+
+### $R^2$
+
+As with single variable linear regression the $R^2$ statistic can be utilized to determine how much the model explains the variance in the response variable, sales.  According to the summary output above the model explains approx. 89% of the sales variance.  We also note there are two values listed for $R^2$.  This is explained further in [this](https://stackoverflow.com/questions/2870631/what-is-the-difference-between-multiple-r-squared-and-adjusted-r-squared-in-a-si) article:
+
+> The "adjustment" in adjusted R-squared is related to the number of variables and the number of observations.
+
+> If you keep adding variables (predictors) to your model, R-squared will improve - that is, the predictors will appear to explain the variance - but some of that improvement may be due to chance alone. So adjusted R-squared tries to correct for this, by taking into account the ratio (N-1)/(N-k-1) where N = number of observations and k = number of variables (predictors).
+
+Another great article can be found [here](http://blog.minitab.com/blog/adventures-in-statistics-2/multiple-regession-analysis-use-adjusted-r-squared-and-predicted-r-squared-to-include-the-correct-number-of-variables).
+
+So we want to consider the value of the `Adjusted R-squared` to ensure that newspaper, which isn't adding to the model's ability to explain the variance in sales, isn't artificially adding to the model's $R^2$ simply by being present.
+
+### RSE
+
+The single variable model above had a RSE value of 3.25 when only TV was considered.  The model with multiple independant variables has a smaller RSE value of 1.686.  In other words, actual sales in each market deviate from the true regression line by approximately 1,686 units, on average.  This implies the multiple variable model is a better fit to the data than the single variable model, and deviation from the true regression line by the model has decreased.
+
+### confidence Intervals
+
+A 95 % confidence confidence interval is defined as a range of values such that with 95 % interval probability, the range will contain the true unknown value of the parameter.  The range is defined in terms of lower and upper limits computed from the sample of data.
+
+```{r}
+confint(fit)
+```
+
+In the case of the advertising data, the 95% confidence interval for $\beta_0$ is [2.324, 3.554] and the 95% confidence interval for $\beta_1$ is [0.043, 0.049].
+Therefore, we can conclude that in the absence of any advertising, sales will, on average, fall somewhere between 2,324 and 3,554 units.  Furthermore, for each $1,000 increase in television advertising, there will be an average increase in sales of between 43 and 49 units.
+
+The newspaper variable; however, contains zero within its interval range, so we can conclude it is not statisticly signifigant given the values of TV and radio.
+
+## Predictions
+
+When predictions are made there are two kinds of errors we can report on:  
+
+* `Confidence intervals` The confidence interval reflects the uncertainty around the mean predictions.   
+
+* `Prediction intervals` The prediction interval gives uncertainty around a single value.  Prediction intervals must account for both the uncertainty in knowing the value of the population mean, plus data scatter. So a prediction interval is always wider than a confidence interval. 
+
+More information can be found [here](http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/) and [here]().
+
+From the book:
+
+_We use a `confidence interval` to quantify the uncertainty surrounding the average sales over a large number of cities. For example, given that \$100,000 is spent on TV advertising and \$20,000 is spent on radio advertising in each city, the 95 % confidence interval is [10,985, 11,528]. We interpret this to mean that 95% of intervals of this form will contain the true value of f(X).  On the other hand, a `prediction interval` can be used to quantify the uncertainty surrounding sales for a `particular` city. Given that \$100,000 is spent on TV advertising and $20,000 is spent on radio advertising in that city the 95 % prediction interval is [7,930, 14,580]._
+
+_We interpret this to mean that 95 % of intervals of this form will contain the true value of Y for this city. Note that both intervals are centered at 11,256, but that the prediction interval is substantially wider than the confidence interval, reflecting the increased uncertainty about sales for a given city in comparison to the average sales over many locations._
+
+
+```{r}
+f = lm(sales ~ TV + radio)
+newdata = data.frame(TV=100000, radio=20000)
+predict(f, newdata, interval="confidence")
+```
+```{r}
+predict(f, newdata, interval="prediction") 
+```
+
+*Note:*
+I think there is something wonky w/ this data, or I did something wrong loading it...   The following gives expected interval value spreads:
+
+```{r}
+library("stats", lib.loc="C:/Program Files/R/R-3.5.2/library")
+attach(stackloss)
+stackloss.lm = lm(stack.loss ~ Air.Flow + Water.Temp + Acid.Conc.)
+newdata = data.frame(Air.Flow=72, Water.Temp=20, Acid.Conc.=85)
+predict(stackloss.lm, newdata, interval="confidence") 
+```
+
+```{r}
+predict(stackloss.lm, newdata, interval="prediction") 
+```
+
+[Source](http://www.r-tutor.com/elementary-statistics/multiple-linear-regression/confidence-interval-mlr)
+
+
+## Interaction Terms
+
+```{r}
+f = lm(sales ~ TV*radio)
+# OR
+f = lm(sales ~ TV + radio + TV:radio)
+
+summary(f)
+```
+
+```{r}
+confint(f)
+```
+
+The results strongly suggest that the model that includes the interaction term is superior to the model that contains only main effects. The p-value for the interaction term, `TV × radio`, is extremely low, indicating that there is strong evidence for $H_a : \beta_3 \neq 0$. In other words, it is clear that the true relationship is not additive. The $R^2$ for the model is 96.8%, compared to only 89.7% for the model that predicts sales using TV and radio without an interaction term. This means that `(96.8-89.7)/(100-89.7) = 69%` of the variability in sales that remains after fitting the additive model has been explained by the interaction term.
+
+Also, the `hierarchical principle` states that `if we include an interaction in a model, we should also include the main effects, even if the p-values associated with their coefficients are not significant`. In other words, if the interaction between X1 and X2 seems important, then we should include both X1 and X2 in the model even if their coefficient estimates have large p-values.
+
+The coefficient estimates above suggest that an increase in TV advertising of \$1,000 is associated with increased sales of _($\beta_1$ + $\beta_3$ * radio) * 1,000 = 19 + 1.1 * radio_ units. And an increase in radio advertising of \$1,000 will be associated with an increase in sales of _($\beta_2$ + $\beta_3$ * TV) * 1,000 = 29 + 1.1 * TV_ units.
+
+
+---
+# Futher Diagnosis
+
+Great reference for the `plot` command diagnostic plots [here](https://data.library.virginia.edu/diagnostic-plots/), and another good resource [here](https://www.andrew.cmu.edu/user/achoulde/94842/homework/regression_diagnostics.htm).
+
+```{r}
+plot(f)
+```
+
+## Non-linearity of the Data
+
+*Plot graph:*  `Residuals vs Fitted` 
+
+Ideally, the `Residuals vs Fitted` plot won't have any discernible patterns.  If there is a pattern--such as a 'U' shape for example--its presence may indicate a problem with some aspect of the linear model.  In the example above there is no pattern in the residuals which indicates we don't have a non-linearity in the data.
+
+## Correlation of Error Terms
+
+Mostly related to time series data; come back and flesh this out after further research if warrented.
+
+##  Non-constant Variance of Error Terms
+
+*Plot graph:*  `Scale-Location`
+
+Non-constant variances in the errors, or heteroscedasticity, can be identified by the presence of a funnel shape in the `Scale-Location` plot.  Ideally we'd like to see a horizontal fitted line with equally (randomly) spread points.  In the example above the points on the graph don't 'funnel' as the fitted values increase along the X-axis, so we can assume we don't have a heteroscedasticity issue.
+
+## Outliers
+
+*Plot graph:*  `Residuals vs Leverage`
+
+This plot helps to find influential observations that might skew the results of the linear regression.  Even though the data might have extreme values, these values might not be influential when determining the regression line (i.e. the results wouldn't be much different if we either include or exclude them from analysis). They follow the trend in the majority of cases and they don't really matter; they are not influential. On the other hand, some cases could be very influential even if they look to be within a reasonable range of the values. They could be extreme cases against a regression line and can alter the results if we exclude them from analysis.
+
+Points to watch for are those at the upper right corner or at the lower right corner of the `Residuals vs Leverage` plot. We look for cases outside of a dashed line, Cook's distance. When cases are outside of the Cook's distance (meaning they have high Cook's distance scores), the cases are influential to the regression results. The regression results will be altered if we exclude those cases.
+
+In the `Residuals vs Leverage` graph above we see that observation '131' has a high Cook distance, and removing that observation would affect the linear regression line.
+
+## Collinearity
+
+Collinearity refers to the situation in which two or more predictor variables are closely related to one another.  The presence of collinearity can pose problems in the regression context, since it can be difficult to separate out the individual effects of collinear variables on the response.  
+
+Since collinearity reduces the accuracy of the estimates of the regression coefficients, it causes the standard error for $\beta_j$ to grow. Recall that the t-statistic for each predictor is calculated by dividing $\beta_j$ by its standard error. Consequently, collinearity results in a decline in the t-statistic. As a result, in the presence of collinearity, we may fail to reject $H_0 : \beta_j = 0$. This means that the power of the hypothesis test-the probability of correctly detecting a non-zero coefficient-is reduced by collinearity.
+
+We call this situation multicollinearity. We can assess multi-collinearity by computing the variance inflation factor (VIF).  The minimum possible value for VIF is one, and as the VIF values grows so too does the multicollinearity between variables.
+
+```{r}
+library(tidyverse)
+library(caret)
+
+car::vif(f)
+```
+
+A VIF score of 3.7 for TV and 3.9 for radio imply there aren't multicollinearity issues between the two variables we need to deal with.  If for example the VIF score would have been 9 then collinearity would have been present.  The TV:Radio has a score of 6.9 which indicates higher multicollinearity, but this makes sense because we created this variable as an interaction between TV and radio.
