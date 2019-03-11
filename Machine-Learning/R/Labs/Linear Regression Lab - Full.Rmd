@@ -1,5 +1,5 @@
 ---
-title: "Linear Regression - Auto Data"
+title: "Linear Regression - Full"
 output:
   html_notebook: default
   pdf_document: default
@@ -169,6 +169,7 @@ We can also compute the variance inflation factor (VIF) scores.  The minimum pos
 library(tidyverse)
 library(caret)
 
+mfit = lm(mpg ~ . -name, data = Auto)
 car::vif(mfit)
 ```
 
@@ -274,7 +275,7 @@ summary(mfit)
 Adding interaction effects has reduced the model's RSE and increased the model's $R^2$ value.  Additionally in the `Residuals vs Fitted` plot below the 'U' shape in the reference line has been much reduced, indicating the model's regression line now better fits the shape of the data.
 
 ```{r}
-plot(mfit, which = 2)
+plot(mfit, which = 1)
 ```
 
 ---
@@ -424,7 +425,7 @@ y=2*x+rnorm (100)
 Perform a simple linear regression of y onto x, without an intercept.
 
 ```{r}
-fit = lm(y???x+0)
+fit = lm(y~x+0)
 summary(fit)
 ```
 
@@ -442,7 +443,7 @@ To be more specific about _which_ predictor has the relationship to the response
 Now perform a simple linear regression of x onto y without an intercept.
 
 ```{r}
-fit = lm(x???y+0)
+fit = lm(x~y+0)
 summary(fit)
 ```
 
@@ -466,12 +467,12 @@ Both (a) and (b) share the same coefficient t-statistic, t-statistic p-value, an
 In R, show that when regression is performed with an intercept, the t-statistic for $H_0 : \beta_1 = 0$ is the same for the regression of y onto x as it is for the regression of x onto y.
 
 ```{r}
-fit = lm(y???x)
+fit = lm(y~x)
 summary(fit)
 ```
 
 ```{r}
-fit = lm(x???y)
+fit = lm(x~y)
 summary(fit)
 ```
 
@@ -888,45 +889,3 @@ for (n in names(subset(Boston, select = -c(crim, chas)))){
 ```
 
 The items above are the coefficient polynomial transformations that indicate a statistically significant association between the predictor and the response.
-
-
-```{r}
-fit = lm(crim ~ poly(chas,3), data = Boston)
-summary(fit)
-```
-
-
-```{r}
-count = 10
-z = c()
-
-for (i in 1:count) {
-  print(i)
-  z[i] = 10*i
-}
-
-print(z)
-```
-
-
-
-```{r}
-fit = lm(crim ~ zn, data = Boston)
-coef(summary(fit))[2,1]
-```
-
-```{r}
-fit = lm(crim ~ zn, data = Boston)
-coef(fit)[2]
-```
-
-```{r}
-fit = lm(crim ~ zn, data = Boston)
-summary(fit)
-```
-
-```{r}
-?coef
-```
-
-
