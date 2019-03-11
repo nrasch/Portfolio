@@ -1,0 +1,891 @@
+---
+title: "Linear Regression - Full"
+output:
+  html_notebook: default
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+# Set defaults for notebook
+```{r}
+setHook("plot.new", function() par(col = "blue", pch = '+'))
+```
+
+---
+# Load the data
+```{r}
+library(ISLR)
+```
+
+```{r}
+attach(Auto)
+names(Auto)
+```
+
+```{r}
+dim(Auto)
+```
+
+---
+# Examine the data
+```{r}
+head(Auto, 5)
+```
+
+```{r}
+summary(Auto)
+```
+
+```{r}
+plot(Auto)
+```
+
+
+---
+# 8
+
+## a
+Use the lm() function to perform a simple linear regression with mpg as the response and horsepower as the predictor. Use the summary() function to print the results.  Comment on the output.
+
+```{r}
+fit = lm(mpg ~ horsepower, data = Auto)
+summary(fit)
+```
+
+
+* Is there a relationship between the predictor and the response?
+
+Yes.  The $\mid{t}\mid$-statistic value is large (24.5) while the p-value is small (2.2e-16 < 0.05).  This implies there is a relationship between the dependent and independent variable.  Or to put it another way, we can reject the null hypothesis that $H_0$ : $\beta_1 = 0$ and declare a relationship to exist between miles per gallon and horsepower.
+
+* How strong is the relationship between the predictor and the response?
+
+A small p-value indicates that it is unlikely to observe such a substantial association between the predictor and the response by chance. Since the p-value for horsepower is very close to zero there is almost no chance the probability of seeing such a value if $H_0$ were true.  This leads us to conclude the relationship is very strong.
+
+We can also consider the F-statistic.  When there is no relationship between the response and predictors, we expect the F-statistic to take on a value close to 1.  However if $H_a$ is true we expect F to be greater than 1.  Above we can see that the F-statistic of 599.7 much greater than one.  This provides compelling evidence against the null hypothesis $H_0$.  Next we examine the `p-value` for the F-statistic to determine if the F-statistic is large enough to reject the null hypothesis, $H_0$.  The F-statistic's p-value is 2.2e-16, so we have extremely strong evidence that horsepower is associated with mpg.
+
+*  Is the relationship between the predictor and the response positive or negative?
+
+Since the coefficient for horsepower is -0.16 we conclude the relationship is negative; for every unit increase in horsepower we expect mpg to decrease by -0.16.
+
+* Other observations
+
+The residual standard error (RSE) provides an absolute measure of lack of fit of the model to the data.  The smaller the RSE value is then the better the model fits the data.  The RSE value of 4.906 implies that actual mpg values deviate from the true regression line by approximately 4.906 units on average.  This probably isn't the greatest value, and would likely concern someone buying a new car if they were gas consumption conscious.  Saying the car achieves 30 mpg but could be off by 5 mpg probably wouldn't sit well with most consumers.
+
+The higher RSE is likely explained somewhat by the adjusted R-squared value of 0.6049.  This implies the model explains 60% of the variability in the response, and that inclusion of other independent variables would likely help the model's accuracy.  For example, a visual inspection of the `plot(Auto)` outputs above indicates that weight would also have an impact on mpg, and better help the regression explain more of the variability in the response.
+
+* What is the predicted mpg associated with a horsepower of 98? What are the associated 95% confidence and prediction intervals?
+
+If we consider the formula $Y = \beta_0 + \beta_1 * mpg$ then we'd expect a value of `39.94 - 0.16*98 = 24.26 mpg`.  
+
+We can check our work in R by calculating the 95% confidence and prediction intervals:
+
+```{r}
+newdata = data.frame(horsepower=98)
+predict(fit, newdata, interval="confidence")
+```
+
+```{r}
+newdata = data.frame(horsepower=98)
+predict(fit, newdata, interval="prediction")
+```
+
+We use a `confidence interval` to quantify the uncertainty surrounding the average mpg over a large number of automobiles. For example in general automobiles with 98 horsepower have a 95% confidence interval of [23.97308, 24.96108].  We interpret this to mean that 95% of intervals of this form will contain the true value of f(X) (i.e. mpg).  
+
+On the other hand, a `prediction interval` can be used to quantify the uncertainty surrounding mpg for a `particular` automobile. Given a specific car with 98 horsepower the 95% prediction interval is [14.8094, 34.12476].
+
+## b
+
+Plot the response and the predictor. Use the abline() function to display the least squares regression line.
+
+```{r}
+{
+  # Actual values
+  plot(Auto$horsepower, Auto$mpg, pch = 19, col = 'red')
+  # Least squares regression line
+  abline(fit, lwd = 2)
+}
+```
+
+## c
+
+Use the plot() function to produce diagnostic plots of the least squares regression fit. Comment on any problems you see with the fit.
+
+```{r}
+plot(fit)
+```
+
+### Non-linearity of the Data
+
+*Plot graph:*  `Residuals vs Fitted` 
+
+Ideally, the `Residuals vs Fitted` plot won't have any discernible patterns.  If there is a pattern--such as a 'U' shape for example--its presence may indicate the data is non-linear.  In the example above there is indeed a 'U' shape present, so we can conclude the data is non-linear.
+
+### Normally Distributed Data
+
+*Plot graph:*  `Normal Q-Q`
+
+The points seem to mostly line up along the straight dashed reference line in the plot.  There doesn't appear to be a concave shape or "heavy tails" in the plot.  This indicates the data is mostly normally distributed.
+
+###  Non-constant Variance of Error Terms
+
+*Plot graph:*  `Scale-Location`
+
+Non-constant variances in the errors, or heteroscedasticity, can be identified by the presence of a funnel shape in the `Scale-Location` plot.  Ideally we'd like to see a horizontal fitted line with equally (randomly) spread points.  In the example above the points on the graph don't 'funnel' as the fitted values increase along the X-axis, so we can assume we don't have a heteroscedasticity issue.
+
+### Outliers
+
+*Plot graph:*  `Residuals vs Leverage`
+
+This plot helps to find influential observations that might skew the results of the linear regression.  Even though the data might have extreme values, these values might not be influential when determining the regression line (i.e. the results wouldn't be much different if we either include or exclude them from analysis). They follow the trend in the majority of cases and they don't really matter; they are not influential. On the other hand, some cases could be very influential even if they look to be within a reasonable range of the values. They could be extreme cases against a regression line and can alter the results if we exclude them from analysis.
+
+Points to watch for are those at the upper right corner or at the lower right corner of the `Residuals vs Leverage` plot. We look for cases outside of a dashed line, Cook's distance. When cases are outside of the Cook's distance (meaning they have high Cook's distance scores), the cases are influential to the regression results. The regression results will be altered if we exclude those cases.
+
+In the `Residuals vs Leverage` graph above we don't observe any data points outside of the Cook's distance dashed line.
+
+--
+# 9
+
+This question involves the use of multiple linear regression on the Auto data set.
+
+## a
+
+Produce a scatter plot matrix which includes all of the variables in the data set.
+
+See the 'Examine the data' section above.
+
+## b
+
+Compute the matrix of correlations between the variables using the function cor(). You will need to exclude the name variable, which is qualitative.
+
+```{r}
+cor(subset(Auto, select=-c(name)))
+```
+
+We can also compute the variance inflation factor (VIF) scores.  The minimum possible value for VIF is one, and as the VIF values grows so too does the multicollinearity between variables.  The smallest possible value for VIF is 1, which indicates the complete absence of collinearity. Typically in practice there is a small amount of collinearity among the predictors. As a rule of thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of collinearity.
+
+```{r}
+library(tidyverse)
+library(caret)
+
+mfit = lm(mpg ~ . -name, data = Auto)
+car::vif(mfit)
+```
+
+Both the `cor` and `vif` show high levels of collinearity between variables in the data.  For example `cylinders` and `displacement` have a correlation score of 0.95, and so clearly one or the other will need to be removed.  The strategy will be to first fit the regression model, remove statistically non-significant variables, and then examine the `vif` and/or `cor` results again.
+
+Fit the regression model to determine which variables are statistically significant, and remove those that are not:
+
+```{r}
+mfit = lm(mpg ~ . -name, data = Auto)
+summary(mfit)
+```
+
+Remove statistically non-significant variables, and fit the model again:
+
+```{r}
+mfit = lm(mpg ~ displacement + weight + year + origin, data = Auto)
+summary(mfit)
+```
+
+Generate VIF scores:
+
+```{r}
+car::vif(mfit)
+```
+
+Displacement and weight still have high VIF scores.  The `summary` command indicates `displacement` can be removed from the model, so we'll iterate one more time:
+
+```{r}
+mfit = lm(mpg ~ weight + year + origin, data = Auto)
+summary(mfit)
+```
+
+Generate VIF scores:
+
+```{r}
+car::vif(mfit)
+```
+
+These values look much improved, and we no longer have problematic amounts of collinearity in the variables.
+
+## c 
+
+Comment on the output of the `summary` command for the regression model.
+
+1. While dealing with the collinearity issues we have reduced the model down to those variables with low p-values that we believe are statistically significant.
+2. The RSE value--considered a measure of the lack of fit of the model to the data--is 3.348.  In other words, actual mpg for each automobile will deviate from the true regression line by approximately 3.348 mpg, on average.  This is a definite improvement over the model that only considered horsepower as a independent variable.
+3. The adjusted $R^2$ value is 0.816, which means the model has explained roughly 81% of the of the variability in mpg when regressed onto weight, year, and origin.
+4. The F-statistic is 579.2 with an associated p-value of 2.2e-16.  This provides extremely strong evidence that there is a relationship between the response and predictors in the model.
+
+
+## d
+
+Use the plot() function to produce diagnostic plots of the linear regression fit.
+
+```{r}
+plot(mfit)
+```
+
+### Non-linearity of the Data
+
+*Plot graph:*  `Residuals vs Fitted` 
+
+Ideally, the `Residuals vs Fitted` plot won't have any discernible patterns.  If there is a pattern--such as a 'U' shape for example--its presence may indicate the data is non-linear.  In the example above there is indeed a 'U' shape present, so we can conclude the data is non-linear.  We'll attempt to address this below when we explore transformations such as quadratics.
+
+### Normally Distributed Data
+
+*Plot graph:*  `Normal Q-Q`
+
+The points seem to line up along the reference line except towards the left side after the 2nd theoretical quantile.  This implies the data contains some more  extreme values than would be expected if it truly came from a Normal distribution.
+
+###  Non-constant Variance of Error Terms
+
+*Plot graph:*  `Scale-Location`
+
+Non-constant variances in the errors, or heteroscedasticity, can be identified by the presence of a funnel shape in the `Scale-Location` plot.  Ideally we'd like to see a horizontal fitted line with equally (randomly) spread points.  In the example above the points on the graph don't 'funnel' as the fitted values increase along the X-axis, so we can assume we don't have a heteroscedasticity issue.
+
+### Outliers
+
+*Plot graph:*  `Residuals vs Leverage`
+
+This plot helps to find influential observations that might skew the results of the linear regression.  Even though the data might have extreme values, these values might not be influential when determining the regression line (i.e. the results wouldn't be much different if we either include or exclude them from analysis). They follow the trend in the majority of cases and they don't really matter; they are not influential. On the other hand, some cases could be very influential even if they look to be within a reasonable range of the values. They could be extreme cases against a regression line and can alter the results if we exclude them from analysis.
+
+Points to watch for are those at the upper right corner or at the lower right corner of the `Residuals vs Leverage` plot. We look for cases outside of a dashed line, Cook's distance. When cases are outside of the Cook's distance (meaning they have high Cook's distance scores), the cases are influential to the regression results. The regression results will be altered if we exclude those cases.
+
+In the `Residuals vs Leverage` graph above we don't observe any data points outside of the Cook's distance dashed line.
+
+## e
+
+Use the * and : symbols to fit linear regression models with interaction effects. Do any interactions appear to be statistically significant?
+
+```{r}
+mfit = lm(mpg ~ weight + year + origin + weight:year + weight:origin + year:origin, data = Auto)
+summary(mfit)
+```
+
+The interaction effect between `weight:year` and `weight:origin` appear to be statistically significant.  We'll remove `year:origin` and fit the model again:
+
+```{r}
+mfit = lm(mpg ~ weight + year + origin + weight:year + weight:origin, data = Auto)
+summary(mfit)
+```
+
+Adding interaction effects has reduced the model's RSE and increased the model's $R^2$ value.  Additionally in the `Residuals vs Fitted` plot below the 'U' shape in the reference line has been much reduced, indicating the model's regression line now better fits the shape of the data.
+
+```{r}
+plot(mfit, which = 1)
+```
+
+---
+# 10
+
+This question should be answered using the Carseats data set.
+
+```{r}
+?Carseats
+```
+
+Note that dollar amounts and population size are in thousands.
+
+```{r}
+attach(Carseats)
+names(Carseats)
+```
+
+```{r}
+head(Carseats)
+```
+
+```{r}
+summary(Carseats)
+```
+
+## a
+
+Fit a multiple regression model to predict Sales using Price, Urban, and US.
+
+```{r}
+fit = lm(Sales ~ Price + Urban + US, data = Carseats)
+```
+
+## b
+
+Provide an interpretation of each coefficient in the model. Be careful-some of the variables in the model are qualitative!
+
+```{r}
+summary(fit)
+```
+
+Let's examine the dummy variables that R has created:
+
+```{r}
+?contrasts
+```
+
+
+```{r}
+contrasts(Urban)
+```
+
+```{r}
+contrasts(US)
+```
+
+
+The coefficient for `Price` indicates that sales will decrease by approximately $-0.054 * 1000$ units as the price of the  increases.  The p-value for the `Price` variable is 2e-16 indicating it is statistically significant and adds to the model's ability to fit the data.
+
+Next, R has created the `UrbanYes` and `USYes` dummy variables for the qualitative values.   `UrbanYes` takes on a value of 1 if the store is in an urban location, and 0 otherwise (i.e. a rural location).  `USYes` takes on a value of 1 if the store is in the US, and 0 otherwise (i.e. non-US).
+
+The coefficient for `Urban` indicates that sales will decrease by approximately $-0.022 * 1000$ units if the store location is in an Urban area (i.e. a negative correlation).  The p-value for `UrbanYes` is 0.936 indicating it is not statistically significant and can be removed.  
+
+The coefficient for `US` indicates that sales will increase by approximately $1.2 * 1000$ units if the store location is in the US (i.e. a positive correlation).  The p-value for `USYes` is 4.86e-06 indicating it is statistically significant and adds to the model's ability to fit the data.
+
+
+## c
+
+Write out the model in equation form, being careful to handle the qualitative variables properly.
+
+$sales = 13.043469 -0.054459*price + 1.200573*USYes$
+
+## d
+
+For which of the predictors can you reject the null hypothesis $H_0 : \beta_j = 0$?
+
+* Price
+* USYes
+
+This is justified by the p-values of the coefficients themselves, the F-statistic value of 41.52, and the p-value of the F-statistic of 2.2e-16.
+
+
+## e
+
+On the basis of your response to the previous question, fit a smaller model that only uses the predictors for which there is evidence of association with the outcome.
+
+```{r}
+fit = lm(Sales ~ Price + US, data = Carseats)
+summary(fit)
+```
+
+## f
+
+How well do the models in (a) and (e) fit the data?
+
+* First model:
+Residual standard error: 2.472 on 396 degrees of freedom
+Multiple R-squared:  0.2393,	Adjusted R-squared:  0.2335 
+F-statistic: 41.52 on 3 and 396 DF,  p-value: < 2.2e-16
+
+
+* Second model:
+Residual standard error: 2.469 on 397 degrees of freedom
+Multiple R-squared:  0.2393,	Adjusted R-squared:  0.2354 
+F-statistic: 62.43 on 2 and 397 DF,  p-value: < 2.2e-16
+
+Both models seem to fit the data about equally well.  There is a small decrease in RSE in the 2nd model as well as a slight increase in the F-statistic value.
+
+## g
+
+Using the model from (e), obtain 95% confidence intervals for the coefficient(s).
+
+A 95 % confidence confidence interval is defined as a range of values such that with 95% interval probability, the range will contain the true unknown value of the parameter.  The range is defined in terms of lower and upper limits computed from the sample of data.
+
+```{r}
+confint(fit)
+```
+
+We note that none of the intervals contains zero as a possible value.
+
+## h
+
+Is there evidence of outliers or high leverage observations in the model from (e)?
+
+```{r}
+plot(fit, which = 5)
+```
+
+Based on the `Residuals vs Lerverage` diagnostic graph above, no, there are no problematic outliers or high leverage observations in the model from (e).
+
+In our example, the data doesn't present any influential points. Cook's distance lines (a red dashed line) are not shown on the plot, because all points are well inside of the Cook's distance perimeters.
+
+---
+# 11
+
+In this problem we will investigate the t-statistic for the null hypothesis $H_0 : \beta = 0$ in simple linear regression without an intercept. To begin, we generate a predictor x and a response y as follows.
+
+```{r}
+set.seed(1)
+x=rnorm(100)
+y=2*x+rnorm (100)
+```
+
+## a
+
+Perform a simple linear regression of y onto x, without an intercept.
+
+```{r}
+fit = lm(y~x+0)
+summary(fit)
+```
+
+* Coefficient estimate: 1.9939
+* Standard error of the coefficient estimate: 0.1065
+* T-statistic: 18.73
+* P-value associated with the null hypothesis $H_0 : \beta = 0$: <2e-16
+
+The coefficient of `X` is 1.9939, which is almost the exact value we selected when creating the data set (i.e. 2).  Next, we can reject the null hypothesis due to the large F-statistic and low F-statistic p-value.  The F-statistic tells us that in general we have extremely strong evidence that at least one of the predictors is associated with the response.  
+
+To be more specific about _which_ predictor has the relationship to the response we can examine the `t-statistic` and the `t-statistic's` `p-value` for each predictor.  We want the `t-statistic` to be *large* and the `p-value` to be *small*.  In our toy model we only have one predictor, X.  It has a t-statistic of 18.73 and t-statistic p-value of <2e-16, so we can again reject the null hypothesis--that is, we declare a relationship to exist between X and Y.
+
+# b
+
+Now perform a simple linear regression of x onto y without an intercept.
+
+```{r}
+fit = lm(x~y+0)
+summary(fit)
+```
+
+* Coefficient estimate: 0.39111
+* Standard error of the coefficient estimate: 0.02089
+* T-statistic: 18.73
+* P-value associated with the null hypothesis $H_0 : \beta = 0$ : <2e-16
+
+The coefficient of `Y` is 0.39111.  Next, we can reject the null hypothesis due to the large F-statistic and low F-statistic p-value.  The F-statistic tells us that in general we have extremely strong evidence that at least one of the predictors is associated with the response.  
+
+To be more specific about _which_ predictor has the relationship to the response we can examine the `t-statistic` and the `t-statistic's` `p-value` for each predictor.  We want the `t-statistic` to be *large* and the `p-value` to be *small*.  In our toy model we only have one predictor, Y.  It has a t-statistic of 18.73 and t-statistic p-value of <2e-16, so we can again reject the null hypothesis--that is, we declare a relationship to exist between Y and X.
+
+# c
+
+What is the relationship between the results obtained in (a) and (b)?
+
+Both (a) and (b) share the same coefficient t-statistic, t-statistic p-value, and F-statistic values.  This illustrates that both models are able to capture the relationship between X and Y irrespective of whether Y is regressed onto Y or X is regressed onto Y.
+
+# f
+
+In R, show that when regression is performed with an intercept, the t-statistic for $H_0 : \beta_1 = 0$ is the same for the regression of y onto x as it is for the regression of x onto y.
+
+```{r}
+fit = lm(y~x)
+summary(fit)
+```
+
+```{r}
+fit = lm(x~y)
+summary(fit)
+```
+
+---
+# 13
+
+```{r}
+?rnorm
+```
+
+
+## a 
+
+Using the rnorm() function, create a vector, x, containing 100 observations drawn from a N(0, 1) distribution. This represents a feature, X. 
+
+```{r}
+set.seed(1)
+x = rnorm(100)
+head(x)
+```
+
+## b
+
+Using the rnorm() function, create a vector, eps, containing 100 observations drawn from a N(0, 0.25) distribution i.e. a normal distribution with mean zero and variance 0.25.
+
+```{r}
+eps = rnorm(100, mean = 0, sd = 0.25)
+head(eps)
+```
+
+## c
+
+Using x and eps, generate a vector y according to the model `Y = ???1+0.5X + e`.  What is the length of the vector y? What are the values of $\beta_0$ and $\beta_1$ in this linear model?
+
+```{r}
+y = -1 + 0.5*x + eps
+length(y)
+```
+
+* $\beta_0$ = -1
+* $\beta_1$ = 0.5
+
+## d
+
+```{r}
+{
+  plot(x, y)
+  abline(coef = c(-1,0.5), col="red")
+}
+```
+
+The relationship between x and y is linear as illustrated in the plot above.
+
+## e
+
+Fit a least squares linear model to predict y using x.
+
+```{r}
+fit = lm(y~x)
+fit1 = fit
+summary(fit)
+```
+
+${\beta_0}$ = -1 while $\hat{\beta_0}$ = -1.00942.  ${\beta_1}$ = 0.5 while $\hat{\beta_1}$ = 0.49973.  We can see that the model's coefficients are almost the same as the source formula's.  The model obviously did a good job of fitting a regression line to the data points and minimizing the residual errors.
+
+## f
+
+Display the least squares line on the scatter plot obtained in (d).  Draw the population regression line on the plot, in a different color. Use the legend() command to create an appropriate legend. 
+
+```{r}
+{
+  plot(x, y)
+  abline(coef = c(-1,0.5), col="red")
+  abline(coef = coef(fit), col="blue")
+  legend("bottomright", legend=c("Population Regression","Least Squares"), col=c("red","blue"), lty=c(1,1))
+}
+```
+
+## g
+
+Now fit a polynomial regression model that predicts $y$ using $x$ and $x^2$. Is there evidence that the quadratic term improves the model fit? Explain your answer
+
+```{r}
+fit = lm(y~x + I(x^2))
+summary(fit)
+```
+
+Adding a quadratic term frankly didn't do much to improve the model.  The RSE for example went from 0.2407 to 0.2395 which is a very small amount.  There was no improvement in F-statistic, and the slight increase in Multiple R-squared can be explained by the fact that this number increase each time you add a variable to to the model.
+
+## h
+
+Repeat (a)-(f) after modifying the data generation process in such a way that there is less noise in the data. The model should remain the same.
+
+```{r}
+set.seed(1)
+x = rnorm(100)
+
+eps = rnorm(100, mean = 0, sd = 0.05)
+
+y = -1 + 0.5*x + eps
+
+fit = lm(y~x)
+fit2 = fit
+summary(fit)
+```
+
+```{r}
+{
+  plot(x, y)
+  abline(coef = c(-1,0.5), col="red")
+  abline(coef = coef(fit), col="blue")
+  legend("bottomright", legend=c("Population Regression","Least Squares"), col=c("red","blue"), lty=c(1,1))
+}
+```
+
+Clearly as the noise (i.e. irreducible error) in the data decreases the model's ability to fit the data increases.  This is illustrated by the increase in $\mid{t}\mid$, decrease in RSE, increase in Adjusted R-squared, and large increase in F-statistic.  The "Population Regression" and "Least Squares" squares lines in the graph above lie almost directly on top of one another as well.
+
+## i
+
+Repeat (a)-(f) after modifying the data generation process in such a way that there is more noise in the data. The model should remain the same.
+
+```{r}
+set.seed(1)
+x = rnorm(100)
+
+eps = rnorm(100, mean = 0, sd = 0.45)
+
+y = -1 + 0.5*x + eps
+
+fit = lm(y~x)
+fit3 =  fit
+summary(fit)
+```
+
+```{r}
+{
+  plot(x, y)
+  abline(coef = c(-1,0.5), col="red")
+  abline(coef = coef(fit), col="blue")
+  legend("bottomright", legend=c("Population Regression","Least Squares"), col=c("red","blue"), lty=c(1,1))
+}
+```
+
+Clearly as the noise (i.e. irreducible error) in the data increases the model's ability to fit the data decreases as well.  This is illustrated by the decrease in $\mid{t}\mid$, increase in RSE, decrease in Adjusted R-squared, and large decrease in F-statistic.  The "Population Regression" and "Least Squares" squares lines in the graph above are also becoming farther part.
+
+
+## j
+
+What are the confidence intervals for $\beta_0$ and $\beta_1$ based on the original data set, the noisier data set, and the less noisy data set?
+
+```{r}
+confint(fit)
+```
+
+```{r}
+confint(fit1)
+```
+
+```{r}
+confint(fit3)
+```
+
+As the noise in the data increases the confidence intervals increase and become wider.
+
+
+---
+# 14
+
+This problem focuses on the collinearity problem.
+
+Linear model:
+
+```{r}
+set.seed(1)
+x1=runif (100)
+x2=0.5*x1+rnorm (100)/10
+y=2+2*x1+0.3*x2+rnorm (100)
+```
+
+## a
+
+Write out the form of the linear model. What are the regression coefficients?
+
+Model's form:  $y = 2 + 2*{x_1} + 0.3*{x_2} + \epsilon$
+regression coefficients: $\beta_0 = 2$, $\beta_1 = 2$, $\beta_2 = 0.3$
+
+## b
+
+What is the correlation between x1 and x2? Create a scatter plot displaying the relationship between the variables.
+
+```{r}
+cor(x1, x2)
+```
+
+The `cor` score for x1 and x2 is 0.84 which indicates a high degree of correlation between the two variables.  Additionally the plot below illustrates a linear shape when the variable's values are plotted against one other.
+
+```{r}
+plot(x1, x2)
+```
+
+## c
+
+Using this data, fit a least squares regression to predict y using x1 and x2. Describe the results obtained.
+
+```{r}
+fit = lm(y~x1+x2)
+summary(fit)
+```
+
+* Source data equation:            $y = 2 + 2*{x_1} + 0.3*{x_2} + \epsilon$
+* True regression coefficients:    $\beta_0 = 2$,   $\beta_1 = 2$,   $\beta_2 = 0.3$
+* Model regression coefficients:   $\beta_0 = 2.1$, $\beta_1 = 1.4$, $\beta_2 = 1$
+
+Based on the t-statistic's p-score we can *reject* the null hypothesis $H_0 : \beta_1 = 0$ and *accept* the null hypothesis $H_0 : \beta_2 = 0$.  However, the $\beta_1$ p-value is only 0.0487 which isn't much less than the cut off of 0.5; we are only barely accepting the null hypothesis $H_0 : \beta_1 = 0$.  
+
+We can also see from the low F-statistic and F-statistic p-value how the collinearity between x1 and x2 is hurting the model's ability to provide strong evidence that at least one of the independent variables is associated with dependent variable.  
+
+And finally the model's Multiple R-squared value tells us the model can only explain around 20% of the variability in the y values.
+
+## d
+
+Now fit a least squares regression to predict y using only x1.  Comment on your results. Can you reject the null hypothesis $H_0 : \beta_1 = 0$?
+
+```{r}
+fit = lm(y~x1)
+summary(fit)
+```
+
+Based on the much reduced t-statistic's p-score we can *reject* the null hypothesis $H_0 : \beta_1 = 0$ and much more confidently state that there is a relasionship between x1 and y.
+
+## e
+
+Now fit a least squares regression to predict y using only x2. Comment on your results. Can you reject the null hypothesis $H_0 : \beta_1 = 0$?
+
+```{r}
+fit = lm(y~x2)
+summary(fit)
+```
+
+Based on the much reduced t-statistic's p-score we can *reject* the null hypothesis $H_0 : \beta_1 = 0$ and much more confidently state that there is a relasionship between x2 and y.
+
+## f
+
+Do the results obtained in (c)-(e) contradict each other? Explain your answer.
+
+No, they do not contradict each other.  Recall that collinearity refers to the situation in which two or more predictor variables are closely related to one another.  The presence of collinearity can pose problems in the regression context, since it can be difficult to separate out the individual effects of collinear variables on the response.  
+
+Since collinearity reduces the accuracy of the estimates of the regression coefficients, it causes the standard error for $\beta_j$ to grow. Recall that the t-statistic for each predictor is calculated by dividing $\beta_j$ by its standard error. Consequently, collinearity results in a decline in the t-statistic. As a result, in the presence of collinearity, we may fail to reject $H_0 : \beta_j = 0$. This means that the power of the hypothesis test-the probability of correctly detecting a non-zero coefficient-is reduced by collinearity.
+
+## g
+
+Now suppose we obtain one additional observation, which was unfortunately mismeasured.  Re-fit the linear models from (c) to (e) using this new data. What effect does this new observation have on the each of the models? In each model, is this observation an outlier? A high-leverage point? Both? Explain your answers.
+
+### g(c)
+
+```{r}
+x1=c(x1, 0.1)
+x2=c(x2, 0.8)
+y=c(y,6)
+```
+
+```{r}
+fit = lm(y~x1+x2)
+summary(fit)
+```
+
+The inclusion of the new data points has pretty much completely reversed the findings of model (c):
+
+* True regression coefficients:    $\beta_0 = 2$,   $\beta_1 = 2$,   $\beta_2 = 0.3$
+
+*BEFORE*
+
+* Model regression coefficients:   $\beta_0 = 2.1$, $\beta_1 = 1.4$, $\beta_2 = 1$
+
+
+*AFTER*
+
+* Model regression coefficients:   $\beta_0 = 2.2$, $\beta_1 = 0.5$, $\beta_2 = 2.5$
+
+We now accept the null hypothesis $H_0 : \beta_1 = 0$ where before we rejected it, and we now reject the null hypothesis $H_0 : \beta_2 = 0$ where before we accepted it.
+
+The reason for all this change is that the new point, 101, has high leverage.  This can be seen in the `Residuals vs Leverage` plot below for example.  Recall that high leverage observations tend to have a sizable impact on the estimated regression line, and indeed we are observing this impact in the current model with observation 101.
+
+```{r}
+plot(fit, which = 5)
+```
+
+A note from my research on outliers in a multivariate model:
+
+> Declaring an observation as an outlier based on a just one (rather unimportant) feature could lead to unrealistic inferences. When you have to decide if an individual entity (represented by row or observation) is an extreme value or not, it better to collectively consider the features (X's) that matter. Enter Cook's Distance.
+
+We could; however, just consider a single variable model using studentized residuals.  Studentized residuals are computed by dividing each residual $e_i$ by its estimated standard error. Observations whose studentized residuals are greater than 3 in absolute value are possible outliers.
+
+```{r}
+fit = lm(y~x2)
+max(abs(rstudent(fit)))
+```
+
+So we do have a high leverage point, but we don't have an an outlier in the x2 observations.
+
+What about the x1 observations?
+
+```{r}
+fit = lm(y~x1)
+max(abs(rstudent(fit)))
+```
+
+Yes, we do have a an outlier in the x1 observations.
+
+### g(d)
+
+```{r}
+fit = lm(y~x1)
+summary(fit)
+```
+
+### g(e)
+
+```{r}
+fit = lm(y~x2)
+summary(fit)
+```
+
+---
+# 15
+
+This problem involves the Boston data set.  We will now try to predict per capita crime rate using the other variables in this data set. In other words, per capita crime rate is the response, and the other variables are the predictors. 
+
+```{r}
+library(MASS)
+attach(Boston)
+names(Boston)
+```
+
+```{r}
+?Boston
+```
+
+## a
+
+For each predictor, fit a simple linear regression model to predict the response. Describe your results. In which of the models is there a statistically significant association between the predictor and the response? Create some plots to back up your assertions.
+
+```{r}
+for (n in names(subset(Boston, select = -c(crim)))){
+  fit = lm(paste("crim ~", n[[1]]), data=Boston) 
+  print(summary(fit)$coefficients)
+  print('')
+}
+```
+
+
+
+There is no evidence that chas is associated with crim.  The other variables; however, have Pr(>|t|) values of less then 0.05 (i.e. evidence of association with crim).
+
+## b
+
+Fit a multiple regression model to predict the response using all of the predictors. Describe your results. For which predictors can we reject the null hypothesis $H_0 : \beta_j = 0$?
+
+```{r}
+fit = lm(crim ~ ., data = Boston)
+summary(fit)
+```
+
+We can reject the null hypothesis $H_0 : \beta_j = 0$ for the following predictors:  zn, dis, rad, black, and medv.
+
+## c
+
+How do your results from (a) compare to your results from (b)?  Create a plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis. That is, each predictor is displayed as a single point in the plot. Its coefficient in a simple linear regression model is shown on the x-axis, and its coefficient estimate in the multiple linear regression model is shown on the y-axis.
+
+First, collect all the (a) univariate regression coefficients:
+
+```{r}
+x1 = c()
+i = 1
+
+for (n in names(subset(Boston, select = -c(crim)))){
+  fit = lm(paste("crim ~", n[[1]]), data=Boston) 
+  x1[i] = coef(summary(fit))[2,1]
+  i = i+1
+}
+
+print(x1)
+```
+
+Now collect all of the (b) univariate regression coefficients:
+
+```{r}
+fit = lm(crim ~ ., data = Boston)
+x2 = coef(summary(fit))[,1]
+print(x2[-1])
+```
+
+Create the plot displaying the univariate regression coefficients from (a) on the x-axis, and the multiple regression coefficients from (b) on the y-axis.
+
+```{r}
+plot(x1, x2[-1])
+```
+
+## d
+
+Is there evidence of non-linear association between any of the predictors and the response? To answer this question, for each predictor X, fit a model of the form $Y = B_0 + B_1*x + B_2*x_2 + B_3*x_3 + \epsilon$
+
+```{r}
+?poly
+```
+
+```{r}
+for (n in names(subset(Boston, select = -c(crim, chas)))){
+  fit = lm(paste("crim ~ poly(", n[[1]], ",3)"), data=Boston) 
+  tmp = coef(summary(fit))[,"Pr(>|t|)"][3:4]
+  print( tmp[tmp < 0.05] )
+  cat("\n")
+}
+```
+
+The items above are the coefficient polynomial transformations that indicate a statistically significant association between the predictor and the response.
