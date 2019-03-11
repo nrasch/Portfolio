@@ -1,9 +1,9 @@
 ---
 title: "Linear Regression - Advertising Data"
 output:
-  html_notebook: default
   html_document:
     df_print: paged
+  html_notebook: default
   word_document: default
 ---
 
@@ -12,7 +12,7 @@ output:
 setHook("plot.new", function() par(col = "blue", pch = '+'))
 ```
 
----
+
 # Load the data
 ```{r}
 data = read.csv("Advertising.csv")
@@ -27,7 +27,7 @@ names(data)
 dim(data)
 ```
 
----
+
 # Examine the data
 ```{r}
 head(data, 5)
@@ -37,7 +37,7 @@ head(data, 5)
 summary(data[, -1])
 ```
 
----
+
 # 3.1 Simple Linear Regression
 
 ## Examine relationship
@@ -101,12 +101,12 @@ we can see in both graphs that as the spending on TV increases the models is les
 
 (This can also be done with ggplot2; article [here](https://drsimonj.svbtle.com/visualising-residuals))
 
----
+
 ## Standard Error (SE) and Residual Standard Error (RSE)
 
 ### SE
 
-If we take a sample of the population, perform linear regression, and then take the sample mean, $\hat\mu$, how accurate is that sample mean $\hat\mu$ as an estimate of populaton mean, $\mu$?
+If we take a sample of the population, perform linear regression, and then take the sample mean, $\hat\mu$, how accurate is that sample mean $\hat\mu$ as an estimate of population mean, $\mu$?
 
 The formula is:
 
@@ -134,7 +134,7 @@ In other words, actual sales in each market deviate from the true regression lin
 
 The RSE is considered a measure of the lack of fit of the model to the data.  The smaller the RSE value is then the better the model fits the data.
 
----
+
 ## Confidence Intervals
 
 Standard errors can be used to compute confidence intervals. A 95% confidence confidence interval is defined as a range of values such that with 95% probability, the range will contain the true unknown value of the parameter.
@@ -149,7 +149,7 @@ Therefore, we can conclude that in the absence of any advertising, sales will, o
 For additional information on confidence and prediction intervals for new, unseen data:  http://www.sthda.com/english/articles/40-regression-analysis/166-predict-in-r-model-predictions-and-confidence-intervals/
 
 
----
+
 ## Hypothesis Tests, T-Statistic, and P-Values
 
 Standard errors can also be used to perform hypothesis tests on the hypothesis coefficients.
@@ -176,7 +176,7 @@ signif(summary(lr.fit)$coefficients, 2)
 
 As seen above we have a large `t-statistic` value and a small `p-value` ( < .05 ), so we reject the null hypothesis--that is, we declare a relationship to exist between TV advertising and sales.
 
----
+
 ## 3.1.3 Assessing the Accuracy of the Model
 
 Once the null hypothesis has been rejected to what extent does the model fit the data?
@@ -197,7 +197,7 @@ In the summary statement below $R^2$ is 0.61, and so just under two-thirds of th
 summary(lr.fit)$r.squared
 ```
 
----
+
 # 3.2 Multiple Linear Regression
 
 ```{r}
@@ -251,7 +251,7 @@ So we want to consider the value of the `Adjusted R-squared` to ensure that news
 
 ### RSE
 
-The single variable model above had a RSE value of 3.25 when only TV was considered.  The model with multiple independant variables has a smaller RSE value of 1.686.  In other words, actual sales in each market deviate from the true regression line by approximately 1,686 units, on average.  This implies the multiple variable model is a better fit to the data than the single variable model, and deviation from the true regression line by the model has decreased.
+The single variable model above had a RSE value of 3.25 when only TV was considered.  The model with multiple independent variables has a smaller RSE value of 1.686.  In other words, actual sales in each market deviate from the true regression line by approximately 1,686 units, on average.  This implies the multiple variable model is a better fit to the data than the single variable model, and deviation from the true regression line by the model has decreased.
 
 ### confidence Intervals
 
@@ -264,7 +264,7 @@ confint(fit)
 In the case of the advertising data, the 95% confidence interval for $\beta_0$ is [2.324, 3.554] and the 95% confidence interval for $\beta_1$ is [0.043, 0.049].
 Therefore, we can conclude that in the absence of any advertising, sales will, on average, fall somewhere between 2,324 and 3,554 units.  Furthermore, for each $1,000 increase in television advertising, there will be an average increase in sales of between 43 and 49 units.
 
-The newspaper variable; however, contains zero within its interval range, so we can conclude it is not statisticly signifigant given the values of TV and radio.
+The newspaper variable; however, contains zero within its interval range, so we can conclude it is not statistically significant given the values of TV and radio.
 
 ## Predictions
 
@@ -331,10 +331,13 @@ Also, the `hierarchical principle` states that `if we include an interaction in 
 The coefficient estimates above suggest that an increase in TV advertising of \$1,000 is associated with increased sales of _($\beta_1$ + $\beta_3$ * radio) * 1,000 = 19 + 1.1 * radio_ units. And an increase in radio advertising of \$1,000 will be associated with an increase in sales of _($\beta_2$ + $\beta_3$ * TV) * 1,000 = 29 + 1.1 * TV_ units.
 
 
----
+
 # Futher Diagnosis
 
 Great reference for the `plot` command diagnostic plots [here](https://data.library.virginia.edu/diagnostic-plots/), and another good resource [here](https://www.andrew.cmu.edu/user/achoulde/94842/homework/regression_diagnostics.htm).
+
+And one more that really does a great job of explaining the outlier and high leverage point graph can be found [here](http://www.sthda.com/english/articles/39-regression-model-diagnostics/161-linear-regression-assumptions-and-diagnostics-in-r-essentials/#outliers-and-high-levarage-points).
+
 
 ```{r}
 plot(f)
@@ -348,7 +351,7 @@ Ideally, the `Residuals vs Fitted` plot won't have any discernible patterns.  If
 
 ## Correlation of Error Terms
 
-Mostly related to time series data; come back and flesh this out after further research if warrented.
+Mostly related to time series data; come back and flesh this out after further research if warranted.
 
 ##  Non-constant Variance of Error Terms
 
@@ -372,7 +375,7 @@ Collinearity refers to the situation in which two or more predictor variables ar
 
 Since collinearity reduces the accuracy of the estimates of the regression coefficients, it causes the standard error for $\beta_j$ to grow. Recall that the t-statistic for each predictor is calculated by dividing $\beta_j$ by its standard error. Consequently, collinearity results in a decline in the t-statistic. As a result, in the presence of collinearity, we may fail to reject $H_0 : \beta_j = 0$. This means that the power of the hypothesis test-the probability of correctly detecting a non-zero coefficient-is reduced by collinearity.
 
-We call this situation multicollinearity. We can assess multi-collinearity by computing the variance inflation factor (VIF).  The minimum possible value for VIF is one, and as the VIF values grows so too does the multicollinearity between variables.
+We call this situation multicollinearity. We can assess multicollinearity by computing the variance inflation factor (VIF).  The minimum possible value for VIF is one, and as the VIF values grows so too does the multicollinearity between variables.  The smallest possible value for VIF is 1, which indicates the complete absence of collinearity. Typically in practice there is a small amount of collinearity among the predictors. As a rule of thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of collinearity.
 
 ```{r}
 library(tidyverse)
@@ -382,3 +385,4 @@ car::vif(f)
 ```
 
 A VIF score of 3.7 for TV and 3.9 for radio imply there aren't multicollinearity issues between the two variables we need to deal with.  If for example the VIF score would have been 9 then collinearity would have been present.  The TV:Radio has a score of 6.9 which indicates higher multicollinearity, but this makes sense because we created this variable as an interaction between TV and radio.
+

@@ -91,8 +91,8 @@ This set of write-ups covers working through predictive modeling machine learnin
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
 * Labs
-    * [Linear Regression Lab - Advertising Data](./R/Labs/Linear_Regression_Lab_-_Advertising_Data.html)
-    * [Linear Regression Lab - Full](./R/Labs/Linear_Regression_Lab_-_Full.html)
+    * [Linear Regression Lab - Advertising Data](http://htmlpreview.github.com/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Linear_Regression_Lab_-_Advertising_Data.html)
+    * [Linear Regression Lab - Full](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Linear_Regression_Lab_-_Full.html)
 
 ## Other Items
 

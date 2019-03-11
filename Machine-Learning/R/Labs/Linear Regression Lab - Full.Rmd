@@ -1,10 +1,9 @@
 ---
 title: "Linear Regression - Full"
 output:
-  html_notebook: default
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
   word_document: default
 ---
 
@@ -13,7 +12,6 @@ output:
 setHook("plot.new", function() par(col = "blue", pch = '+'))
 ```
 
----
 # Load the data
 ```{r}
 library(ISLR)
@@ -28,7 +26,7 @@ names(Auto)
 dim(Auto)
 ```
 
----
+
 # Examine the data
 ```{r}
 head(Auto, 5)
@@ -42,8 +40,6 @@ summary(Auto)
 plot(Auto)
 ```
 
-
----
 # 8
 
 ## a
@@ -144,7 +140,6 @@ Points to watch for are those at the upper right corner or at the lower right co
 
 In the `Residuals vs Leverage` graph above we don't observe any data points outside of the Cook's distance dashed line.
 
---
 # 9
 
 This question involves the use of multiple linear regression on the Auto data set.
@@ -278,13 +273,13 @@ Adding interaction effects has reduced the model's RSE and increased the model's
 plot(mfit, which = 1)
 ```
 
----
+
 # 10
 
 This question should be answered using the Carseats data set.
 
 ```{r}
-?Carseats
+#?Carseats
 ```
 
 Note that dollar amounts and population size are in thousands.
@@ -321,7 +316,7 @@ summary(fit)
 Let's examine the dummy variables that R has created:
 
 ```{r}
-?contrasts
+#?contrasts
 ```
 
 
@@ -409,7 +404,7 @@ Based on the `Residuals vs Lerverage` diagnostic graph above, no, there are no p
 
 In our example, the data doesn't present any influential points. Cook's distance lines (a red dashed line) are not shown on the plot, because all points are well inside of the Cook's distance perimeters.
 
----
+
 # 11
 
 In this problem we will investigate the t-statistic for the null hypothesis $H_0 : \beta = 0$ in simple linear regression without an intercept. To begin, we generate a predictor x and a response y as follows.
@@ -476,11 +471,11 @@ fit = lm(x~y)
 summary(fit)
 ```
 
----
+
 # 13
 
 ```{r}
-?rnorm
+#?rnorm
 ```
 
 
@@ -638,7 +633,7 @@ confint(fit3)
 As the noise in the data increases the confidence intervals increase and become wider.
 
 
----
+
 # 14
 
 This problem focuses on the collinearity problem.
@@ -796,7 +791,7 @@ fit = lm(y~x2)
 summary(fit)
 ```
 
----
+
 # 15
 
 This problem involves the Boston data set.  We will now try to predict per capita crime rate using the other variables in this data set. In other words, per capita crime rate is the response, and the other variables are the predictors. 
@@ -808,7 +803,7 @@ names(Boston)
 ```
 
 ```{r}
-?Boston
+#?Boston
 ```
 
 ## a
@@ -876,7 +871,7 @@ plot(x1, x2[-1])
 Is there evidence of non-linear association between any of the predictors and the response? To answer this question, for each predictor X, fit a model of the form $Y = B_0 + B_1*x + B_2*x_2 + B_3*x_3 + \epsilon$
 
 ```{r}
-?poly
+#?poly
 ```
 
 ```{r}
@@ -889,3 +884,4 @@ for (n in names(subset(Boston, select = -c(crim, chas)))){
 ```
 
 The items above are the coefficient polynomial transformations that indicate a statistically significant association between the predictor and the response.
+
