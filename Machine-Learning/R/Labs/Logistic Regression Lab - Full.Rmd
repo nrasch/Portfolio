@@ -1,0 +1,424 @@
+---
+title: "R Notebook"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+rm(list = setdiff(ls(), lsf.str()))
+
+library(tidyverse)
+library(caret)
+library(testthat)
+library(class)
+library(MASS)
+```
+
+# 10
+
+This question should be answered using the Weekly data set, which is part of the ISLR package. This data contains 1,089 weekly returns for 21 years, from the beginning of 1990 to the end of 2010.
+
+```{r}
+library(ISLR)
+attach(Weekly)
+```
+
+
+## a
+
+Produce some numerical and graphical summaries of the Weekly data. Do there appear to be any patterns?
+
+```{r}
+dim(Weekly)
+```
+
+```{r}
+names(Weekly)
+```
+
+```{r}
+head(Weekly)
+```
+
+
+
+```{r}
+summary(Weekly)
+```
+
+```{r}
+plot(Weekly)
+```
+
+The only real relationship that seems to exist is between `Year` and `Volume` which has a non-linear, concave down shape.
+
+## b
+
+Use the full data set to perform a logistic regression with Direction as the response and the five lag variables plus Volume as predictors. Use the summary function to print the results. Do any of the predictors appear to be statistically significant? If so, which ones?
+
+```{r}
+fit = glm(Direction ~ . -Year -Today, data = Weekly, family=binomial)
+summary(fit)
+```
+
+There is only one predictor that appears to be statistically significant:  Lag2.  We note that Lag2's Z-value is 2.175 with an associated p-value of 0.03 which is less than 0.05.  This leads us to reject the null hypothesis and declare that there is some relationship between one or more of the independent variables and the dependent variable.  (Although I would argue that the relationship is rather weak...)
+
+## c
+
+Compute the confusion matrix and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
+
+We can also examine the model's prediction values.  The `type="response"` option tells R to output probabilities of the form $P(Y = 1|X)$, as opposed to other information such as the logit.  If no data set is supplied to the predict() function, then the probabilities are computed for the training data that was used to fit the logistic regression model.
+
+```{r}
+probs = predict(fit, type = 'response')
+```
+
+Since Direction is a qualitative variable we can examine the dummy values R has created for us:
+
+```{r}
+contrasts(Direction)
+```
+
+Now we know that the values output from the `predict` function are the correspond to the probability of the market going up rather than down.  Next, we can create a confusion matrix:
+
+```{r}
+# Create the vector of Direction predictions from the fitted model
+preds = rep("Down", dim(Weekly)[1])
+preds[probs > 0.5] = 'Up'
+
+# Create the confusion matrix
+{
+  print(confusionMatrix(factor(preds), factor(Weekly$Direction))$table)
+  print(confusionMatrix(factor(preds), factor(Weekly$Direction))$overall)
+}
+```
+
+The model predicts the direction of the market correctly 56% of the time.  However, if we were to naively pick "Up" as the prediction for every observation we would have an accuracy rating of `605/(484+605) = 55.6%`.  Thus the model only does slightly better than random guessing.
+
+Next we can examine the ratio of correct to incorrect predictions for each Direction:
+
+```
+Pred      Down	Up
+Down      54    48
+Up        430   557
+
+Correct:  11%   92%
+```
+
+Thus we see that the model is much better at predicting 'Up' movements (92% accuracy) than 'Down' movements (11% accuracy).
+
+## d
+
+Now fit the logistic regression model using a training data period from 1990 to 2008, with Lag2 as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from 2009 and 2010).
+
+```{r}
+train = subset(Weekly, Year < 2009)
+test = subset(Weekly, Year >= 2009)
+
+assertthat::are_equal( (dim(train)[1] + dim(test)[1]), dim(Weekly)[1] )
+
+```
+
+```{r}
+# Fit the model on the training data
+fit = glm(Direction ~ Lag2, data = train, family=binomial)
+
+# Predict using the test data
+probs = predict(fit, test, type = 'response')
+
+preds = rep("Down", dim(test)[1])
+preds[probs > 0.5] = 'Up'
+
+# Create the confusion matrix
+{
+  print(confusionMatrix(factor(preds), factor(test$Direction))$table)
+  print(confusionMatrix(factor(preds), factor(test$Direction))$overall)
+}
+
+```
+
+The model has an accuracy rating of 62% which improves on the previous model by 6%.  The model is also now 10% better at correctly predicting 'Down' movements:
+
+```
+Pred      Down	Up
+Down      9     5
+Up        34    56
+
+Correct:  21%   92%
+```
+
+## e
+
+Repeat (d) using LDA.
+
+```{r}
+# Fit the LDA model on the training data
+fit = lda(Direction ~ + Lag2, data = train)
+
+# Make predictions against the test data
+pred = predict(fit, test)
+
+# Confusion matrix and accuracy
+{
+  print(confusionMatrix(factor(pred$class), factor(test$Direction))$table)
+  print(confusionMatrix(factor(pred$class), factor(test$Direction))$overall)
+}
+
+```
+
+The LDA model has the same outcomes and results as the logistic regression model.
+
+## f
+
+Repeat (d) using QDA.
+
+```{r}
+# Fit the LDA model on the training data
+fit = qda(Direction ~ + Lag2, data = train)
+
+# Make predictions against the test data
+pred = predict(fit, test)
+
+# Confusion matrix and accuracy
+{
+  print(confusionMatrix(factor(pred$class), factor(test$Direction))$table)
+  print(confusionMatrix(factor(pred$class), factor(test$Direction))$overall)
+}
+```
+
+The QDA model has predicted 'Up' for every observation:
+
+```{r}
+assertthat::are_equal( length(pred$class == 'Up'), dim(test)[1] )
+```
+
+This results in an accuracy of 59% for the model, which is less than the previous logistic regression and LDA models.
+
+## g 
+
+Repeat (d) using KNN with K = 1.
+
+Setup the argument objects required by the KNN function:
+
+```{r}
+ktrain = cbind(train$Lag2)
+ktest =  cbind(test$Lag2)
+klabels = train$Direction
+```
+
+Fit the model with K = 1:
+
+```{r}
+set.seed(1)
+fit = knn(ktrain, ktest, klabels, k = 1)
+```
+
+Create a confusion matrix as we did with the LR, LDA and QDA models:
+
+```{r}
+{
+  print(confusionMatrix(factor(fit), factor(test$Direction))$table)
+  print(confusionMatrix(factor(fit), factor(test$Direction))$overall)
+}
+```
+
+The accuracy is only 50% for `K = 1`.  Increasing `K` to 3:
+
+```{r}
+set.seed(1)
+fit = knn(ktrain, ktest, klabels, k = 3)
+{
+  print(confusionMatrix(factor(fit), factor(test$Direction))$table)
+  print(confusionMatrix(factor(fit), factor(test$Direction))$overall)
+}
+```
+
+The accuracy has increased by 4.8%, but is still less than the LR, LDA and QDA models.
+
+## h
+
+Which of these methods appears to provide the best results on this data?
+
+The LR and LDA models did the best and had the same performance, namely an accuracy rating of 62% with the following Up/Down prediction rates:
+
+```
+Pred      Down	Up
+Down      9     5
+Up        34    56
+
+Correct:  21%   92%
+```
+
+# 11
+
+In this problem, you will develop a model to predict whether a given car gets high or low gas mileage based on the Auto data set.
+
+```{r}
+attach(Auto)
+dim(Auto)
+```
+
+## a
+
+Create a binary variable, mpg01, that contains a 1 if mpg contains a value above its median, and a 0 if mpg contains a value below its median.
+
+```{r}
+mpg01 = rep(0, dim(Auto)[1])
+mpg01[Auto$mpg > median(Auto$mpg)] = 1
+Auto = cbind(Auto, mpg01)
+names(Auto)
+```
+
+```{r}
+head(Auto)
+```
+
+## b
+
+Explore the data graphically in order to investigate the association between mpg01 and the other features. Which of the other features seem most likely to be useful in predicting mpg01? Scatterplots and boxplots may be useful tools to answer this question. Describe your findings. 
+
+```{r}
+{
+  par(mfrow=c(3,3))
+  boxplot(cylinders~mpg01,data=Auto, ylab="Cylinders", xlab="Below/Above MPG Median")
+  boxplot(displacement~mpg01,data=Auto, ylab="Displacement", xlab="Below/Above MPG Median")
+  boxplot(horsepower~mpg01,data=Auto, ylab="Horsepower", xlab="Below/Above MPG Median")
+  boxplot(weight~mpg01,data=Auto, ylab="Weight", xlab="Below/Above MPG Median")
+  boxplot(acceleration~mpg01,data=Auto, ylab="Acceleration", xlab="Below/Above MPG Median")
+  boxplot(year~mpg01,data=Auto, ylab="Year", xlab="Below/Above MPG Median")
+  boxplot(origin~mpg01,data=Auto, ylab="Origin", xlab="Below/Above MPG Median")
+}
+```
+
+```{r}
+cor(Auto[, -9])
+```
+
+It appears that cylinders, displacement, horsepower, and weight may be useful variables to predict mpg01.
+
+## c
+
+Split the data into a training set and a test set.
+
+```{r}
+# Randomly select 20% of the data to be the test set.  Note that most of the high MPG observations seem to be near the end of the data set, thus we need to use the 'sample' function.
+set.seed(1)
+index = sample(1:nrow(Auto), 0.2 * nrow(Auto), replace = F)
+
+train = Auto[-index, ]
+test = Auto[index,]
+```
+
+## d
+
+Perform LDA on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained?
+
+```{r}
+# Fit the LDA model on the training data
+fit = lda(mpg01 ~ +cylinders +displacement +horsepower +weight, data = train)
+
+# Make predictions against the test data
+pred = predict(fit, test)
+
+# Confusion matrix and accuracy
+{
+  print(confusionMatrix(factor(pred$class), factor(test$mpg01))$table)
+  print(confusionMatrix(factor(pred$class), factor(test$mpg01))$overall)
+  print(mean(factor(pred$class) != factor(test$mpg01)))
+}
+
+```
+
+The model has a 12.8% test error rate.  It's also somewhat worse at predicting autos whose MPG will be below the median than those that are above:
+
+```
+Pred      Down	Up
+Down      34    3
+Up        7     34
+
+Correct:  83%   92%
+```
+
+## e 
+
+Perform QDA on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained? 
+
+```{r}
+rm(list = c('fit', 'probs', 'preds', 'pred'))
+
+# Fit the LDA model on the training data
+fit = qda(mpg01 ~ +cylinders +displacement +horsepower +weight, data = train)
+
+# Make predictions against the test data
+pred = predict(fit, test)
+
+# Confusion matrix and accuracy
+{
+  print(confusionMatrix(factor(pred$class), factor(test$mpg01))$table)
+  print(confusionMatrix(factor(pred$class), factor(test$mpg01))$overall)
+  print(mean(factor(pred$class) != factor(test$mpg01)))
+}
+```
+
+The QDA is able to predict median MPG with an error rate of 10.3%, which is 2.5% less than the LDA model.  The QDA model is also able to better predict both types of classifications evenly:
+
+```
+Pred      Down	Up
+Down      36    3
+Up        5     34
+
+Correct:  88%   92%
+```
+
+## f
+
+Perform logistic regression on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b).  What is the test error of the model obtained?
+
+```{r}
+rm(list = c('fit', 'probs', 'preds', 'pred'))
+
+# Fit the model on the training data
+fit = glm(mpg01 ~ +cylinders +displacement +horsepower +weight, data = train, family=binomial)
+
+# Predict using the test data
+probs = predict(fit, test, type = 'response')
+
+preds = rep(0, dim(test)[1])
+preds[probs > 0.5] = 1
+
+# Create the confusion matrix
+{
+  print(confusionMatrix(factor(preds), factor(test$mpg01))$table)
+  print(confusionMatrix(factor(preds), factor(test$mpg01))$overall)
+  print(mean(factor(preds) != factor(test$mpg01)))
+}
+```
+
+The LR and QDA models appear to give the same outputs.
+
+## g
+
+Perform KNN on the training data, with several values of K, in order to predict mpg01. Use only the variables that seemed most associated with mpg01 in (b). What test errors do you obtain? Which value of K seems to perform the best on this data set? 
+
+```{r}
+preds = sapply(1:20,function(x){
+    pred = knn(train[,c('horsepower','weight','displacement')],
+               test[,c('horsepower','weight','displacement')], 
+               cl = train[,'mpg01'],
+               k=x
+           )
+    mean(pred != test[,'mpg01'])
+})
+
+{
+  plot(1:20, preds, type = 'l', xlab = "K-value", ylab = "Error Rate")
+  abline(v = 3, col = 'red')
+}
+```
+
+```{r}
+min(preds)
+```
+
+The KNN model with `K = 3` has the best error rate so far at 7.7%.
