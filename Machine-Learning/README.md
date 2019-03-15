@@ -32,7 +32,6 @@ This set of write-ups covers creating image classification models from scratch, 
 * [N-layer neural network optimizations from scratch](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-04.ipynb)
 * [TensforFlow baseline](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-05.ipynb)
 * [Keras baseline](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/03-ComputerVision-Classification/Classification-06.ipynb)
-* [Kaggle Dog Breed Identification Challenge - ResNet34](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Machine-Learning/Python/03-ComputerVision-Classification/DogBreeds.ipynb)
 
 
 ### Reference models
@@ -83,7 +82,7 @@ This set of write-ups covers working through predictive modeling machine learnin
 
 * [IMDB Movie Review Sentiment Classification](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Machine-Learning/Python/04-Classic-Datasets/NLP-CNN-1.ipynb) - Movie review classification modeling using natural language processing, CNN algorithms, and transfer learning with GloVe pre-trained embeddings
 
-## R (with some Octave)
+## R
 
 * [Graphing and Basic Models](./R)
 * Recommender Systems
@@ -91,7 +90,10 @@ This set of write-ups covers working through predictive modeling machine learnin
     * [Content Based](./R/RS1-Content-Based-Recommendations-Dec-2017)
     * [Memory Based](./R/RS2-Memory-Based-Recommendations-Jan-2018)
     * [Item Based](./R/RS3-Item-Based-Recommendations-Jan-2018)
-
+* Labs
+    * [Linear Regression Lab - Advertising Data](http://htmlpreview.github.com/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Linear_Regression_Lab_-_Advertising_Data.html)
+    * [Linear Regression Lab - Full](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Linear_Regression_Lab_-_Full.html)
+    * [Logistic Regression Lab - Guided](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Logistic_Regression_Lab_-_Guided.html)
 
 ## Other Items
 
