@@ -403,8 +403,8 @@ Perform KNN on the training data, with several values of K, in order to predict 
 
 ```{r}
 preds = sapply(1:20,function(x){
-    pred = knn(train[,c('horsepower','weight','displacement')],
-               test[,c('horsepower','weight','displacement')], 
+    pred = knn(train[,c('cylinders', 'horsepower','weight','displacement')],
+               test[,c('cylinders', 'horsepower','weight','displacement')], 
                cl = train[,'mpg01'],
                k=x
            )
@@ -421,4 +421,253 @@ preds = sapply(1:20,function(x){
 min(preds)
 ```
 
-The KNN model with `K = 3` has the best error rate so far at 7.7%.
+The KNN model with `K = 3` has the best error rate so far at 7.7% as well as the best evenly distributed classification error rate:
+
+```{r}
+preds = knn(train[,c('cylinders', 'horsepower','weight','displacement')],
+            test[,c('cylinders', 'horsepower','weight','displacement')], 
+            cl = train[,'mpg01'],
+            k=3
+        )
+
+# Create the confusion matrix
+{
+  print(confusionMatrix(factor(preds), factor(test$mpg01))$table)
+}
+```
+
+```
+Pred      Down	Up
+Down      37    2
+Up        4     35
+
+Correct:  90%   95%
+```
+
+#12
+
+## a
+
+Write a function, Power(), that prints out the result of raising 2 to the 3rd power. In other words, your function should compute 2^3 and print out the results.
+
+```{r}
+Power2 = function(a, x) {
+  print(2^3)
+}
+
+Power2()
+```
+
+## b
+
+Create a new function, Power2(), that allows you to pass any two numbers, x and a, and prints out the value of x^a.
+
+```{r}
+Power2 = function(a, x) {
+  print(a^x)
+}
+
+Power2(2, 3)
+```
+
+Using the Power2() function that you just wrote, compute 10^3, 8^17, and 131^3.
+
+```{r}
+{
+Power2(10, 3)
+Power2(8, 17)
+Power2(131, 3)
+}
+```
+
+## d
+
+Now create a new function, Power3(), that actually returns the result x^a as an R object, rather than simply printing it to the screen. 
+
+```{r}
+Power3 = function(x, a) {
+  result = x^a
+  return(result)
+}
+
+x = Power3(2, 3);x
+```
+
+## e
+
+Now using the Power3() function, create a plot of f(x) = x2.  The x-axis should display a range of integers from 1 to 10, and the y-axis should display x^2. 
+
+```{r}
+x = seq(1, 10)
+y = sapply(x, Power3, a = 2)
+
+plot(x = x, y = y, xlab = 'x (log scale)', ylab = 'F(x)', log = 'x')
+```
+
+## f
+
+Create a function, PlotPower(), that allows you to create a plot of x against x^a for a fixed a and for a range of values of x.
+
+```{r}
+PlotPower = function(x, a) { 
+  y = sapply(x, Power3, a = a)
+  plot(
+    x = x, 
+    y = y, 
+    main = paste("F(x) = x^", a),
+    xlab = 'x (log scale)', 
+    ylab = 'F(x)', log = 'x')
+  }
+
+PlotPower(1:10, 5)
+
+```
+
+# 13
+
+Using the Boston data set, fit classification models in order to predict whether a given suburb has a crime rate above or below the median.  Explore logistic regression, LDA, and KNN models using various subsets of the predictors. Describe your findings.
+
+## Create Helper Functions
+
+```{r}
+ShowStats = function(model, testData) {
+  # Predict using the test data
+  probs = predict(model, testData, type = 'response')
+  
+  # Create binary predictions
+  preds = rep(0, dim(testData)[1])
+  preds[probs > 0.5] = 1
+  
+  # Create the confusion matrix
+  print(confusionMatrix(factor(preds), factor(testData$crim_med)))
+}
+```
+
+## Create Response Variable
+
+First create a binary response variable, crim_med, that contains a 1 if the crim value is above the median, and a 0 if crim is below or equal to the median.
+
+```{r}
+rm(Boston)
+attach(Boston)
+crim_med = rep(0, dim(Boston)[1])
+crim_med[Boston$crim > median(Boston$crim)] = 1
+Boston = cbind(Boston, crim_med)
+names(Boston)
+```
+
+```{r}
+head(Boston)
+```
+
+## Select Statisticly Signifgant Predictors
+
+The statistically significant predictors should be selected next.  Two selection methods will be utilized:  Inspection of the model's summary, and the MASS::stepAIC function:
+
+__GLM Summary Inspection__
+
+```{r}
+fit = glm(crim_med ~ . -crim -crim_med, data = Boston, family=binomial)
+summary(fit)
+```
+
+The summary indicates that the variables indus, chas, rm, and lstat should be removed from the model.
+
+__MASS::stepAIC__
+
+```{r}
+fit = glm(crim_med ~ . -crim -crim_med, data = Boston, family=binomial)
+step =  stepAIC(fit, direction="both")
+step$anova # display results
+```
+
+The MASS::stepAIC also indicated that the variables indus, chas, rm, and lstat should be removed from the model.
+
+## Create Training and Test Datasets
+
+Split the data into a training set and a test set.
+
+```{r}
+# Randomly select 20% of the data to be the test set using the 'sample' function.
+set.seed(1)
+index = sample(1:nrow(Boston), 0.2 * nrow(Boston), replace = F)
+
+train = Boston[-index, ]
+test = Boston[index,]
+```
+
+## Logistic Regression Model
+
+Fit a logistic regression model with the predictors determined to be statistically significant:
+
+```{r}
+fit = glm(crim_med ~ zn + nox + age + dis + rad + tax + ptratio + black + medv, data = train, family=binomial)
+ShowStats(fit, test)
+```
+
+## LDA
+
+```{r}
+# Fit the LDA model on the training data
+fit = lda(crim_med ~ zn + nox + age + dis + rad + tax + ptratio + black + medv, data = train)
+
+# Make predictions against the test data
+pred = predict(fit, test)
+
+# Confusion matrix and accuracy
+print(confusionMatrix(factor(pred$class), factor(test$crim_med)))
+```
+
+## QDA
+
+```{r}
+# Fit the LDA model on the training data
+fit = qda(crim_med ~ zn + nox + age + dis + rad + tax + ptratio + black + medv, data = train)
+
+# Make predictions against the test data
+pred = predict(fit, test)
+
+# Confusion matrix and accuracy
+print(confusionMatrix(factor(pred$class), factor(test$crim_med)))
+```
+
+## KNN
+
+```{r}
+preds = sapply(1:20,function(x){
+    pred = knn(train[,c('zn', 'nox', 'age', 'dis', 'rad', 'tax', 'ptratio', 'black', 'medv')],
+               test[,c('zn', 'nox', 'age', 'dis', 'rad', 'tax', 'ptratio', 'black', 'medv')], 
+               cl = train[,'crim_med'],
+               k=x
+           )
+    mean(pred != test[,'crim_med'])
+})
+
+{
+  plot(1:20, preds, type = 'l', xlab = "K-value", ylab = "Error Rate")
+  abline(v = 1, col = 'red')
+}
+```
+
+```{r}
+min(preds)
+```
+
+
+```{r}
+preds = knn(train[,c('zn', 'nox', 'age', 'dis', 'rad', 'tax', 'ptratio', 'black', 'medv')],
+            test[,c('zn', 'nox', 'age', 'dis', 'rad', 'tax', 'ptratio', 'black', 'medv')], 
+            cl = train[,'crim_med'],
+            k=1
+        )
+
+# Create the confusion matrix
+confusionMatrix(factor(preds), factor(test$crim_med))
+```
+
+## Conclusion
+
+The KNN model with K = 1 by far did the best.  This also makes sense, because houses are geographically clustered together.  Thus it would be safe to assume that if a given house was in a low crime area then so too would be the other houses nearby and visa versa for high crime areas.
+
+
+
