@@ -305,6 +305,11 @@ We can now see that the validation error rate on data held out from the model fi
 
 ## Linear Discriminant Analysis
 
+Two plotting resources:
+
+* https://rstudio-pubs-static.s3.amazonaws.com/35817_2552e05f1d4e4db8ba87b334101a43da.html
+* https://www.statmethods.net/advstats/discriminant.html
+
 Now we will perform LDA on the Smarket data. In R, we fit an LDA model using the lda() function, which is part of the MASS library. We fit the model using only the observations before 2005.
 
 ```{r}
