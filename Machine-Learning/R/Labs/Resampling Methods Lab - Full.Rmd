@@ -1,0 +1,169 @@
+---
+title: "Resampling Methods Lab - Full"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+{
+  rm(list = setdiff(ls(), lsf.str()))
+  library(ISLR)
+  library(caret)
+  library(boot)
+}
+```
+
+# 5
+
+In Chapter 4, we used logistic regression to predict the probability of default using income and balance on the Default data set. We will now estimate the test error of this logistic regression model using the validation set approach. Do not forget to set a random seed before beginning your analysis.
+
+```{r}
+# ?Default
+```
+
+```{r}
+attach(Default)
+summary(Default)
+```
+
+```{r}
+head(Default)
+```
+
+## a & b
+
+Fit a logistic regression model that uses income and balance to predict default.  Using the validation set approach, estimate the test error of this model.
+
+```{r}
+# Randomly select 20% of the data to be the test set.
+set.seed(1)
+index = sample(1:nrow(Default), 0.2 * nrow(Default), replace = F)
+
+train = Default[-index, ]
+test = Default[index,]
+
+{
+  # Fit the model on the data
+  fit = glm(default ~ +income +balance, data = train, family = 'binomial')
+  
+  # Predict using the test data
+  probs = predict(fit, test, type = 'response')
+  preds = ifelse(probs > 0.5, 'Yes', 'No')
+
+  # Create the confusion matrix
+  print(confusionMatrix(factor(preds), factor(test$default)))
+}
+```
+
+## c
+
+Repeat the process in (b) three times, using three different splits of the observations into a training set and a validation set. Comment on the results obtained.
+
+```{r}
+err = rep(0, 10)
+
+for (i in 1:length(err)) {
+  # Randomly select 20% of the data to be the test set.
+  set.seed(i*10)
+  index = sample(1:nrow(Default), 0.2 * nrow(Default), replace = F)
+  
+  train = Default[-index, ]
+  test = Default[index,]
+  
+  {
+    # Fit the model on the data
+    fit = glm(default ~ +income +balance, data = train, family = 'binomial')
+    
+    # Predict using the test data
+    probs = predict(fit, test, type = 'response')
+    preds = ifelse(probs > 0.5, 'Yes', 'No')
+  
+    # Record accuracy rate
+    err[i] = confusionMatrix(factor(preds), factor(test$default))$overall[1]
+  }
+}
+
+summary(err)
+```
+
+## d
+
+Now consider a logistic regression model that predicts the probability of default using income, balance, and a dummy variable for student.  Estimate the test error for this model using the validation set approach. Comment on whether or not including a dummy variable for student leads to a reduction in the test error rate.
+
+```{r}
+err = rep(0, 10)
+
+for (i in 1:length(err)) {
+  # Randomly select 20% of the data to be the test set.
+  set.seed(i*10)
+  index = sample(1:nrow(Default), 0.2 * nrow(Default), replace = F)
+  
+  train = Default[-index, ]
+  test = Default[index,]
+  
+  {
+    # Fit the model on the data
+    fit = glm(default ~ +income +balance +student, data = train, family = 'binomial')
+    
+    # Predict using the test data
+    probs = predict(fit, test, type = 'response')
+    preds = ifelse(probs > 0.5, 'Yes', 'No')
+  
+    # Record accuracy rate
+    err[i] = confusionMatrix(factor(preds), factor(test$default))$overall[1]
+  }
+}
+
+summary(err)
+```
+
+Adding student to the model appeared to have little to no effect on the model's accuracy rate.
+
+# 6
+
+We continue to consider the use of a logistic regression model to predict the probability of default using income and balance on the Default data set. In particular, we will now compute estimates for the standard errors of the income and balance logistic regression coefficients in two different ways: (1) using the bootstrap, and (2) using the standard formula for computing the standard errors in the glm() function.
+
+## a
+
+Using the summary() and glm() functions, determine the estimated standard errors for the coefficients associated with income and balance in a multiple logistic regression model that uses both predictors.
+
+```{r}
+summary(glm(default~+income+balance,data=Default,family='binomial'))$coef
+```
+
+## b
+
+Write a function, boot.fn(), that takes as input the Default data set as well as an index of the observations, and that outputs the coefficient estimates for income and balance in the multiple logistic regression model.
+
+```{r}
+# 1)  Create a function that computes the statistic of interest.
+boot.fn = function(data, index) {
+  return( coef(glm(default ~ +income +balance ,data=data, subset = index, family='binomial')) ) 
+}
+```
+
+
+## c
+
+Use the boot() function together with your boot.fn() function to estimate the standard errors of the logistic regression coefficients for income and balance.
+
+```{r}
+# 2) Use the boot() function to compute SE of 1000 bootstrap estimates for the intercept and slope terms
+set.seed(1)
+boot(Default, boot.fn, 1000)
+```
+
+## d
+
+Comment on the estimated standard errors obtained using the glm() function and using your bootstrap function.
+
+Below is a table of the coefficients standard errors from both methods above:
+
+```
+             Std. Error GLM   Std. Error Bootstrap
+(Intercept)  4.347564e-01     4.239273e-01
+income       4.985167e-06     4.582525e-06
+balance      2.273731e-04     2.267955e-04
+```
+

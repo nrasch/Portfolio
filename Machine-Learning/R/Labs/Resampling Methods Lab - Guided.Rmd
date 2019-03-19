@@ -1,0 +1,223 @@
+---
+title: "Resampling Methods - Guided"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r}
+library(ISLR)
+library(boot)
+```
+
+
+# Forward
+
+I've already done much of this work in Python for deep machine learning.  As such there may not be as many definitions and explanations in this write up as in the previous ones...
+
+# Baseline
+
+Create a train/test set and a set of baseline models:
+
+```{r}
+set.seed(2)
+train = sample(392, 196)
+```
+
+Create models:
+
+```{r}
+{
+  # Linear regression
+  lm.1 = lm(mpg~horsepower, data = Auto, subset = train)
+  lm.1.mean = mean((Auto$mpg - predict(lm.1, Auto))[-train ]^2)
+  print(paste("MSE:       ", lm.1.mean))
+  
+  # LR w/ quadratic term
+  lm.2 = lm(mpg~poly(horsepower, 2), data = Auto, subset = train)
+  lm.2.mean = mean((Auto$mpg - predict(lm.2, Auto))[-train ]^2)
+  print(paste("MSE Quad:  ", lm.2.mean))
+  
+  # LR w/ cubic term
+  lm.3 = lm(mpg~poly(horsepower, 3), data = Auto, subset = train)
+  lm.3.mean = mean((Auto$mpg - predict(lm.3, Auto))[-train ]^2)
+  print(paste("MSE Cubic: ", lm.3.mean))
+
+}
+```
+
+These results are consistent with our previous findings: a model that predicts mpg using a quadratic function of horsepower performs better than a model that involves only a linear function of horsepower, and there is little evidence in favor of a model that uses a cubic function of horsepower.
+
+# Cross-Validation
+
+Cross validation can be performed on generalized linear models via the `boot::cv.glm` function:
+
+```{r}
+# ?cv.glm
+```
+
+## Leave-One-Out Cross-Validation (LOOCV)
+
+Linear regression:
+
+```{r}
+fit = glm(mpg~horsepower, data = Auto)
+err = cv.glm(Auto, fit)
+names(err)
+```
+
+`boot::cv.glm$delta` :  A vector of length two. The first component is the raw cross-validation estimate of prediction error. The second component is the adjusted cross-validation estimate. The adjustment is designed to compensate for the bias introduced by not using leave-one-out cross-validation.
+
+```{r}
+err$delta
+```
+
+So in this case Our cross-validation estimate for the test error is approximately 24.23.
+
+Next we'll fit the model utilizing increasingly complex polynomial fits, and see if we can reduce the test error:
+
+```{r}
+# Init err container
+err = rep(0, 5)
+
+# Start the for loop
+for (i in 1:5) {
+  # Fit the model
+  fit = glm(mpg~poly(horsepower, i), data = Auto)
+  # Record the test error
+  err[i] = cv.glm(Auto, fit)$delta[1]
+}
+
+# Examine results
+err
+```
+
+```{r}
+{
+  plot(1:5, err, type = 'b', ylab = 'Test MSE', xlab = 'Poly Degree', ylim=c(19,25))
+  text(err, labels=paste(round(err, 2)), cex=0.9, font=2, offset = .5, pos = 3)
+}
+```
+
+## k-Fold Cross-Validation (CV)
+
+Next we'll perform 10 fold cross validation utilizing increasingly complex polynomial fits:
+
+```{r}
+{
+  set.seed(17)
+  
+  err = rep(0, 10)
+  
+  for (i in 1:10) {
+    # Fit the model
+    fit = glm(mpg~poly(horsepower, i), data = Auto)
+    # Record the test error
+    err[i] = cv.glm(Auto, fit, K = 10)$delta[1]
+  }
+}
+```
+
+Plot the test MSE values:
+
+```{r}
+{
+  plot(1:10, err, type = 'b', ylab = 'Test MSE', xlab = 'Poly Degree', ylim=c(18.5,25))
+  text(err, labels=paste(round(err, 2)), cex=0.9, font=2, offset = .5, pos = 3)
+}
+```
+
+# Bootstrap
+
+The bootstrap is a widely applicable and extremely powerful statistical tool that can be used to quantify the uncertainty associated with a given estimator or statistical learning method. As a simple example, the bootstrap can be used to estimate the standard errors of the coefficients from a linear regression fit. The power of the bootstrap lies in the fact that it can be easily applied to a wide range of statistical learning methods, including some for which a measure of variability is otherwise difficult to obtain and is not automatically output by statistical software.
+
+## Estimating the Accuracy of a Statistic of Interest
+
+We will first examine a toy example using the `Portfolio` dataset. 
+
+```{r}
+# ?Portfolio
+
+{
+  attach(Portfolio)
+  summary(Portfolio)
+  plot(X,Y)
+}
+```
+
+Performing a bootstrap analysis in R entails only two steps.  First, we must create a function that computes the statistic of interest.  Second, we use the boot() function, which is part of the boot library, to perform the bootstrap by repeatedly sampling observations from the data set with replacement.
+
+1)  Create a function that computes the statistic of interest.
+
+```{r}
+func = function(data, index) {
+  X = data$X[index]
+  Y = data$Y[index]
+  
+  # This is simply formula (5.6) which is show below in the next section
+   return((var(Y)-cov(X,Y))/(var(X)+var(Y)-2*cov(X,Y)))
+}
+```
+
+2)  Use the boot() function, which is part of the boot library, to perform the bootstrap by repeatedly sampling observations from the data set with replacement.  Below we produce $R = 1000$ bootstrap estimates for $\alpha$.
+
+```{r}
+boot(Portfolio, func, R=1000)
+```
+
+The output indicates that using the original data $\hat{\alpha} = 0.58$ and the bootstrap estimate for $SE(\hat{\alpha}) = 0.089$.
+
+## Estimating the Accuracy of a Linear Regression Model
+
+Next we will use bootstrap to assess the variability of the coefficient estimates (intercept and slope) of a linear regression model for the Auto data set regressing `mpg` on `horsepower`.
+
+First output the coefficient estimates using a linear regression model:
+
+```{r}
+summary(lm(mpg~horsepower, data = Auto))$coef
+```
+
+According to the model $SE(\hat{\beta_0}) = 0.717$ and $SE(\hat{\beta_1}) = 0.006$.
+
+
+Now output the coefficient estimates using bootstrap:
+
+```{r}
+{
+  # 1)  Create a function that computes the statistic of interest.
+  func = function(data, index) {
+    return( coef(lm(mpg~horsepower, data = data, subset = index)) ) 
+  }
+  
+  # 2) Use the boot() function to compute SE of 1000 bootstrap estimates for the intercept and slope terms
+  boot(Auto, func, 1000)
+}
+```
+
+According to the boostrap $SE(\hat{\beta_0}) = 0.862$ and $SE(\hat{\beta_1}) = 0.008$.
+
+## Differences Discussion
+
+There is a difference between LR model and the bootstrap model coefficient SE values.
+
+The standard error of the intercept and the slope for a linear regression model are calculated by the following formula:
+
+![](images\LR_Coeff_SE_Formula.png)
+
+We see in equation 3.8 that two assumptions are made:  
+
+1) While we don't know $\sigma^2$ we assume we can estimate it from the data.  The estimate of $\sigma$ is known as the residual standard error (RSE), and is given by the formula $RSE = \sqrt{RSS/(n - 2)}$.  This means if the model is wrong then the RSS values are going to be wrong, and thus the RSE and $\sigma$ will be wrong.  In this case we know from earlier labs that the `mpg~horsepower` relationship is non-linear, and so the linear regression model's residuals are going to be inflated.
+
+2) We assume that the $x_i$ are fixed, and all the variability comes from the variation in the errors $\epsilon_i$ in the formula $Y = \beta_0 + \beta_1X + \epsilon$.
+
+---
+
+If we examine the bootstrap formula we can see how it attempts to get around these two issues:
+
+![](images\bootstrap_formula.png)
+
+where ${\sigma_X}^2 = Var(X)$, ${\sigma_Y}^2 = Var(Y)$, and $\sigma_{XY} = Cov(X, Y)$.
+
+1) Is mitigated by looking at the covariance between X and Y.  This should help to pick up on non-linear relationships for example.
+
+2) Is mitigated by calculating the variance of X, which will help pick up on non-fixed $x_i$ values that add to the variability.
