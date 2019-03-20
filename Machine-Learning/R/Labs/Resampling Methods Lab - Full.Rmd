@@ -11,6 +11,9 @@ output:
   library(ISLR)
   library(caret)
   library(boot)
+  library(assertthat)
+  library(MASS)
+  library(psych)
 }
 ```
 
@@ -166,4 +169,316 @@ Below is a table of the coefficients standard errors from both methods above:
 income       4.985167e-06     4.582525e-06
 balance      2.273731e-04     2.267955e-04
 ```
+
+The standard errors of the coefficients are comparable between the two methods.
+
+# 7
+
+The cv.glm() function can be used in order to compute the LOOCV test error estimate. Alternatively, one could compute those quantities using just the glm() and predict.glm() functions, and a for loop. You will now take this approach in order to compute the LOOCV error for a simple logistic regression model on the Weekly data set. Recall that in the context of classification problems, the LOOCV error is given in (5.4). 
+
+![](images\LOOCV_error_formula.png)
+
+## a
+
+Fit a logistic regression model that predicts Direction using Lag1 and Lag2.
+
+```{r}
+fit = glm(Direction ~ +Lag1 +Lag2, data=Weekly, family='binomial')
+summary(fit)
+```
+
+## b
+
+Fit a logistic regression model that predicts Direction using Lag1 and Lag2 using all but the first observation.
+
+```{r}
+fit = glm(Direction ~ +Lag1 +Lag2, data=Weekly[-1, ], family='binomial')
+summary(fit)
+```
+
+## c
+
+Use the model from (b) to predict the direction of the first observation. Was this observation correctly classified?
+
+```{r}
+probs = predict(fit, Weekly[1, ], type = 'response')
+assertthat::are_equal(ifelse(probs > 0.5, 'Up', 'Down'), Weekly[1,]$Direction)
+```
+
+No, the observation was incorrectly classified as 'Up' when it should have been 'Down.'
+
+## d
+
+User a for loop to recreate LOOCV for the Weekly data set regressing Direction onto Lag1 and Lag2:
+
+```{r}
+# Create the LOOCV function
+func = function(index) {
+    fit = glm(Direction ~ +Lag1 +Lag2, data=Weekly[-index, ], family='binomial')
+    probs = predict(fit, Weekly[index, ], type = 'response')
+    
+    # Using sum will convert the T|F response into a 1|0:
+    sum( (ifelse(probs > 0.5, 'Up', 'Down')) == Weekly[index,]$Direction )
+}
+
+# Use lapply to create a list of 1|0 values and then take the mean which will produce the 
+# LOOCV error given in (5.4) above
+errs = unlist( lapply(1:nrow(Weekly), func)  )
+```
+
+## e
+
+Take the average of the n numbers obtained in (d)iv in order to obtain the LOOCV estimate for the test error. Comment on the results.
+
+```{r}
+mean(errs)
+```
+
+The model is able to classify the market's direction a little better than random guessing, and this is similar to the results when observing these market direction types of data sets in previous write-ups.
+
+
+# 8
+
+We will now perform cross-validation on a simulated data set.
+
+## a
+
+```{r}
+set.seed(1)
+x = rnorm(100)
+y = x - 2 * x^2 + rnorm(100)
+```
+
+N = 100
+P = rnorm(100)
+
+Equation:  $y = x - 2x^2 + \epsilon$
+
+## b
+
+```{r}
+plot(x, y)
+```
+
+The data appears fit a shape associated with a a non-linear, quadratic distribution.
+
+## c
+
+Set a random seed, and then compute the LOOCV errors that result from fitting the following four models using least squares.
+
+```{r}
+data = data.frame(y, x)
+head(data)
+```
+
+```{r}
+# Set the seed
+set.seed(1)
+
+# Init err container
+err = rep(0, 4)
+
+# Start the for loop
+for (i in 1:4) {
+  # Fit the model
+  fit = glm(y~poly(x, i), data = data)
+  # Record the test error
+  err[i] = cv.glm(data, fit)$delta[1]
+}
+  
+# Examine results
+round(err, 3)
+```
+
+## d
+
+Repeat (c) using another random seed, and report your results.  Are your results the same as what you got in (c)? Why?
+
+```{r}
+# Set the seed
+set.seed(100)
+
+# Init err container
+err = rep(0, 4)
+
+# Start the for loop
+for (i in 1:4) {
+  # Fit the model
+  fit = glm(y~poly(x, i), data = data)
+  # Record the test error
+  err[i] = cv.glm(data, fit)$delta[1]
+}
+  
+# Examine results
+round(err, 3)
+```
+
+The results are the same.  This is because LOOCV runs` nrow()` number of times leaving out one observation each time until each observation has been left out once and only once.  As such there is no random element such as a sub-sampling of the data.  Thus the error rates calculate the same each time, because the data set is static.
+
+## e
+
+Which of the models in (c) had the smallest LOOCV error? Is this what you expected? Explain your answer.
+
+The model in which `poly = 2` had the smallest LOOCV error.  Yes, this is what was expected, because the data clearly had a quadratic, non-linear shape.  As such the model w/ the quadratic term was best able to fit the values of the observations.  The other models suffered from either under fitting (linear) or over fitting (cubic and quartic).
+
+## f
+
+Comment on the statistical significance of the coefficient estimates that results from fitting each of the models in (c) using least squares. Do these results agree with the conclusions drawn based on the cross-validation results? 
+
+We'll examine the quartic model:
+
+```{r}
+summary(fit)
+```
+
+The linear and quadratic terms are statistically significant with p-values < 0.05.  The cubic and quartic terms are not statistically significant with p-values > 0.05.  This seems to correlate with the results of the LOOCV error rates.  The exception of course is the linear model:
+'
+```{r}
+fit = glm(y~poly(x, 1), data = data)
+summary(fit)
+```
+
+Even though the linear term has statistical significance the model simply doesn't fit the "shape" of the data (i.e. lots of bias), and so the error rate is high no matter how statistically significant the coefficient is.  Visual representation below:
+
+```{r}
+{
+  plot(x,y)
+  abline(y,x, col = 'red')
+}
+```
+
+
+#9
+
+We will now consider the Boston housing data set, from the MASS library.
+
+## a
+
+Based on this data set, provide an estimate for the population mean of medv. Call this estimate `mu`.
+
+```{r}
+attach(Boston)
+mu = mean(Boston$medv)
+print(mu)
+```
+
+## b
+
+Provide an estimate of the standard error of mu.  Interpret this result.
+
+Standard deviation formula:  $Var(\hat\mu) = SE(\hat\mu)^2 = \frac{\sigma^2}{n}$
+
+Standard error of the mean:  $\sigma_M = \frac{\sigma}{\sqrt{N}}$
+
+```{r}
+# Sigma:  We can use an R function:
+sigma = sd(Boston$medv)
+
+# Sigma:  We can do it by hand:
+v = lapply(Boston$medv, function(x) { (x - mu)^2 })
+sigma = sqrt((1/nrow(Boston))*sum(unlist(v)))
+
+# Compute the standard error of the mean:
+se = sigma / sqrt(nrow(Boston))
+
+# Our result vs. R lib func:
+print(paste(se, describe(Boston$medv)$se))
+```
+
+## c
+
+Now estimate the standard error of mu using the bootstrap. How does this compare to your answer from (b)?
+
+```{r}
+func = function(data, index) {
+  return( mean(data[index, ]$medv) )
+}
+
+set.seed(1)
+boot(Boston, func, R=1000)
+```
+
+The two methods produce results that are very similar; the difference between the two is 0.03.
+
+## d
+
+Based on your bootstrap estimate from (c), provide a 95 % confidence interval for the mean of medv. Compare it to the results obtained using `t.test(Boston$medv)`.
+
+```{r}
+{
+print(mu)
+print(mu - 2*0.4119374)
+print(mu + 2*0.4119374)
+
+print(t.test(Boston$medv))
+}
+```
+
+Again, the results are extremely similar.
+
+## e
+
+Based on this data set, provide an estimate, $\mu_{med}$, for the median value of medv in the population.
+
+```{r}
+median(Boston$medv)
+```
+
+## f
+
+We now would like to estimate the standard error of $\mu_{med}$. Unfortunately, there is no simple formula for computing the standard error of the median. Instead, estimate the standard error of the median using the bootstrap. Comment on your findings. 
+
+```{r}
+func = function(data, index) {
+  return(median(data[index, ]$medv))
+}
+
+set.seed(1)
+boot(Boston, func, R=1000)
+```
+
+## g
+
+Based on this data set, provide an estimate for the tenth percentile of medv in Boston suburbs. Call this quantity `mu01`.  (You can use the quantile() function.)
+
+```{r}
+# ?quantile
+mu01 = quantile(Boston$medv, 0.1)
+mu01
+```
+
+## h
+
+Use the bootstrap to estimate the standard error of `mu01`. Comment on your findings.
+
+```{r}
+func = function(data, index) {
+  return(quantile(data[index, ]$medv, 0.1))
+}
+
+set.seed(1)
+boot(Boston, func, R=1000)
+```
+
+A percentile (or a centile) is a measure used in statistics indicating the value below which a given percentage of observations in a group of observations falls. For example, the 20th percentile is the value (or score) below which 20% of the observations may be found. 
+
+So, in our example we are looking at the bottom 10% of the population in regard to median value.  We can assume the observations in this category have a wide spread of values, and thus a higher sigma value which in turn will increase the standard error of the mean:
+
+```{r}
+{
+  print(summary(Boston[ which(Boston$medv <= quantile(Boston$medv, 0.1)), ]$medv))
+  print(sd(Boston[ which(Boston$medv <= quantile(Boston$medv, 0.1)), ]$medv))
+}
+```
+
+So there is a spread of 5 through 12.7 with a standard deviation of 2.2.  And if we compare this middle 40% through 60% of the population which we assume will have a more stable spread of values:
+
+```{r}
+{
+  print(summary(Boston[ which(Boston$medv >= quantile(Boston$medv, 0.4) & Boston$medv <= quantile(Boston$medv, 0.6)), ]$medv))
+  print(sd(Boston[ which(Boston$medv >= quantile(Boston$medv, 0.4) & Boston$medv <= quantile(Boston$medv, 0.6)), ]$medv))
+}
+```
+
+The difference between the Min and Max values is much less (3 vs. 7.7), and the standard deviation is over twice as small.
 
