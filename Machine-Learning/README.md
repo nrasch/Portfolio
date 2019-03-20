@@ -95,6 +95,8 @@ This set of write-ups covers working through predictive modeling machine learnin
     * [Linear Regression Lab - Full](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Linear_Regression_Lab_-_Full.html)
     * [Logistic Regression Lab - Guided](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Logistic_Regression_Lab_-_Guided.html)
     * [Logistic Regression Lab - Full](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Logistic_Regression_Lab_-_Full.html)
+    * [Resampling Methods - Guided](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Resampling_Methods_Lab_-_Guided.html)
+    * [Resampling Methods - Full](http://htmlpreview.github.io/?https://github.com/nrasch/Portfolio/blob/master/Machine-Learning/R/Labs/Resampling_Methods_Lab_-_Full.html)
 
 ## Other Items
 
