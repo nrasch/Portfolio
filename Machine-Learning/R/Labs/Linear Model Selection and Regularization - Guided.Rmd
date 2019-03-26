@@ -1,0 +1,163 @@
+---
+title: "Linear Model Selection and Regularization - Guided"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Definitions
+
+## Best Subset Selection
+
+To perform best subset selection, we fit a separate least squares regression for each possible combination of the `p` predictors. That is, we fit all `p` models selection that contain exactly one predictor, all $(^{p}_{2}) = p(p - 1)/2$ models that contain exactly two predictors, and so forth. We then look at all of the resulting models, with the goal of identifying the one that is best.
+
+We can define _best_ by utilizing cross-validated prediction error, $C_p$, $BIC$, or adjusted $R^2$ in order to select among the models.
+
+## Forward Stepwise Selection
+
+Forward stepwise selection is a computationally efficient alternative to best subset selection. While the best subset selection procedure considers all $2^p$ possible models containing subsets of the `p` predictors, forward stepwise considers a much smaller set of models. Forward stepwise selection begins with a model containing no predictors, and then adds predictors to the model, one-at-a-time, until all of the predictors are in the model. In particular, at each step the variable that gives the greatest additional improvement to the fit is added to the model.
+
+Note that forward stepwise selection __is not guaranteed__ to yield the _best_ model containing a subset of the `p` predictors.  (See page 209 for a great example of this...)
+
+Forward stepwise can be used even when $n < p$, and so is the only viable subset method when `p` is very large.
+
+
+## Backward Stepwise Selection
+
+Like forward stepwise selection, backward stepwise selection provides an efficient alternative to best subset selection. However, unlike forward stepwise selection, it begins with the full least squares model containing all `p` predictors, and then iteratively removes the least useful predictor, one-at-a-time. 
+
+Like forward stepwise selection, backward stepwise selection __is not guaranteed__ to yield the _best_ model containing a subset of the `p` predictors.
+
+Backward selection requires that the number of samples `n` is larger than the number of variables `p` (so that the full model can be fit). In contrast, forward stepwise can be used even when $n < p$, and so is the only viable subset method when `p` is very large.
+
+## $C_p$
+
+For a fitted least squares model containing `d` predictors, the $C_p$ estimate of test MSE is computed using the equation
+
+$C_p = \frac{1}{n}(RSS + 2d\hat{\sigma}^2$
+
+The $C_p$ statistic tends to take on a small value for models with a low test error, so when determining which of a set of models is best, we choose the model with the lowest $C_p$ value.
+
+## Bayesian Information Criterion (BIC)
+
+BIC is derived from a Bayesian point of view, but ends up looking similar to $C_p$. For the least squares model with `d` predictors, the BIC is, up to irrelevant constants, given by
+
+$BIC = \frac{1}{n\sigma^2}(RSS + log(n)d\sigma^2$
+
+Like $C_p$, the BIC will tend to take on a small value for a model with a low test error, and so generally we select the model that has the lowest BIC value. 
+
+
+# Lab Exercises
+
+## Lab 1: Subset Selection Methods
+
+### Load and examine the data
+
+```{r}
+library(ISLR)
+attach(Hitters)
+head(Hitters)
+```
+
+We do have some 'NA' values in the data, so let's identify which columns contain missing values:
+
+```{r}
+# The '2' below indicates we want to test over columns
+apply(Hitters, 2, function(x) any(is.na(x)))
+```
+
+How many rows have missing _Salary_ data?
+
+```{r}
+{
+print(sum(is.na(Hitters$Salary)))
+print(paste(round(sum(is.na(Hitters$Salary)) / dim(Hitters)[1] * 100), '%', sep = ''))
+}
+```
+
+So roughly 18% of the data has missing values.  Let's go ahead and omit them:
+
+```{r}
+{
+data = na.omit(Hitters)
+dim(data)
+}
+```
+
+### Best Subset Selection
+
+Next we'll use best subset selection to predict a baseball player's salary based on one or more variables.  The regsubsets() function (part of the leaps library) performs best subset selection by identifying the best model that contains a given number of predictors, where best is quantified using RSS.  Later on we'll examine the 'best' model utilizing other metrics besides RSS.
+
+```{r}
+library(leaps)
+
+fit = regsubsets(Salary ~ ., data = data)
+summary(fit)$outmat
+```
+
+So the 'best' (i.e. smallest RSS) model w/ two variables is 'Hits|CRBI', and the 'best' model with three variables is 'Hits|CRBI|PutOuts'.
+
+Note the 'regsubsets' by default only calculates up to the best eight-variable model.  Before we proceed let's include the full complement of variables:
+
+```{r}
+fit = regsubsets(Salary ~ ., data = data, nvmax = 19)
+sfit = summary(fit)
+```
+
+
+The problem with using $RSS$ and/or $R^2$ to select the best model was highlighted in the text:  The $RSS$ of these $p + 1$ models decreases monotonically, and the $R^2$ increases monotonically, as the number of features included in the models increases.  Thus we need to evaluate and select the best model utilizing other metrics that don't suffer from these flaws, and we can use the $C_p$, $BIC$, or adjusted $R^2$ statistics for this purpose. 
+
+We can plot the aforementioned metrics of performance (i.e. $RSS$, $C_p$, $BIC$, and adjusted $R^2$) together for comparison:
+
+```{r}
+par(mfrow = c(2,2))
+
+{
+  # Plot RSS
+  plot(sfit$rss, xlab = "Num. of Vars.", ylab = 'RSS', type = 'l')
+  
+  # Plot adjusted R2 w/ indicator for the model with the largest adjusted R2 statistic
+  plot(sfit$adjr2, xlab = "Num. of Vars.", ylab = 'Adjusted R2', type = 'l')
+  points(which.max(sfit$adjr2), sfit$adjr2[which.max(sfit$adjr2)], col = 'red', cex = 2, pch = 20)
+  
+  # Plot adjusted Cp w/ indicator for the model with the smallest Cp statistic
+  plot(sfit$cp, xlab = "Num. of Vars.", ylab = 'Cp', type = 'l')
+  points(which.min(sfit$cp), sfit$cp[which.min(sfit$cp)], col = 'red', cex = 2, pch = 20)
+  
+  # Plot adjusted BIC w/ indicator for the model with the smallest BIC statistic
+  plot(sfit$bic, xlab = "Num. of Vars.", ylab = 'BIC', type = 'l')
+  points(which.min(sfit$bic), sfit$bic[which.min(sfit$bic)], col = 'red', cex = 2, pch = 20)
+}
+
+```
+
+Or we can view plots using built in regsubsets functionality, although frankly I don't care for these:
+
+```{r}
+{
+plot(fit,scale="r2")
+plot(fit,scale="adjr2")
+plot(fit,scale="Cp")
+plot(fit,scale="bic")
+}
+```
+
+### Forward and Backward Stepwise Selection
+
+```{r}
+# Forward stepwise selection
+fit = regsubsets(Salary ~ ., data = data, method = 'forward')
+summary(fit)$outmat
+```
+
+```{r}
+# Backward stepwise selection
+fit = regsubsets(Salary ~ ., data = data, method = 'backward')
+summary(fit)$outmat
+```
+
+For this data, the best one-variable through six-variable models are each identical for best subset and forward selection.  However, the best seven-variable models identified by forward stepwise selection, backward stepwise selection, and best subset selection are different.
+
+
+
+
