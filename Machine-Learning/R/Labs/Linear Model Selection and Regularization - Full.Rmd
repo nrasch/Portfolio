@@ -1,0 +1,132 @@
+---
+title: "Linear Model Selection and Regularization - Full"
+output:
+  html_document:
+    df_print: paged
+---
+
+# 8
+
+In this exercise, we will generate simulated data, and will then use this data to perform best subset selection.
+
+## a
+
+Use the rnorm() function to generate a predictor X of length n = 100, as well as a noise vector e of length n = 100.
+
+```{r}
+set.seed(1)
+x = rnorm(n = 100)
+e = rnorm(n = 100, mean = 0, sd = 5)
+```
+
+
+## b
+
+Generate a response vector Y of length n = 100 according to the model $Y = \beta_0 + \beta_1X + \beta_2X^2 + \beta_3X^3 + \epsilon$, where B0 through B3 are constants of your choice.
+
+```{r}
+y = 2 + 4*x + 6*(x^2) + 8*(x^3) + e
+plot(x, y)
+```
+
+
+## c
+
+Use the regsubsets() function to perform best subset selection in order to choose the best model containing the predictors X, X2,...,X10. What is the best model obtained according to Cp, BIC, and adjusted R-squared? Show some plots to provide evidence for your answer, and report the coefficients of the best model obtained.
+
+```{r}
+library(leaps)
+
+data = data.frame(y = y, x = x)
+head(data)
+```
+
+```{r}
+fit = regsubsets(y ~ poly(x, degree = 10, raw = T), data = data, nvmax = 10)
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+```{r}
+# Difference in BIC Scores when P = 4 and P = 3:
+print(sfit$bic[4] - sfit$bic[3])
+```
+
+The adjusted R-squared and Cp statistics have the best scores when the number of predictors was four, and the BIC had the best score when the number of predictors was three.  
+
+Does this matter?  An article on the subject:  https://www.methodology.psu.edu/resources/aic-vs-bic/.  Also note that the Cp (i.e. Mallows Cp) is a a variant of AIC developed by Colin Mallows, so we can assume the comments in the PSU article apply equally to the Cp statistic.
+
+From the article:
+
+> But despite various subtle theoretical differences, their [i.e. AIC/Cp and BIC] only difference in practice is the size of the penalty; BIC penalizes model complexity more heavily. The only way they should disagree is when AIC chooses a larger model than BIC.
+
+And this is exactly what we see above where the Cp model optimizes at four paramters and the BIC model optimizes on three.  For all intents and purposes then we will say the best model using best subset selection is P = 3 (i.e. we'll favor the simpler model over the more complex one).  
+
+The coefficients for P = 3 are:
+
+```{r}
+coefficients(fit, id = 3)
+```
+
+These are very close to the true beta values of (2,4,6,8).  The coefficients for P = 4 are by comparason:
+
+```{r}
+coefficients(fit, id = 4)
+```
+
+So, although the number of predictors is similiar between the models, _which_ predictors were selected by the models differs greatly.
+
+
+## d
+
+### Forward stepwise selection
+
+```{r}
+# Forward stepwise selection
+fit = regsubsets(y ~ poly(x, degree = 10, raw = T), data = data, method = 'forward')
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+### Backward stepwise selection
+
+```{r}
+# Forward stepwise selection
+fit = regsubsets(y ~ poly(x, degree = 10, raw = T), data = data, method = 'backward')
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+Again the Cp and BIC differ in model size, but as we discussed earlier it is to be expected and makes sense.  We'll settle on the best subset selection where P = 6 (again favoring the simpler model) and examine the coefficients:
+
+```{r}
+coefficients(fit, id = 6)
+```
+

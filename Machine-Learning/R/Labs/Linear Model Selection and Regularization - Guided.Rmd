@@ -30,11 +30,11 @@ Like forward stepwise selection, backward stepwise selection __is not guaranteed
 
 Backward selection requires that the number of samples `n` is larger than the number of variables `p` (so that the full model can be fit). In contrast, forward stepwise can be used even when $n < p$, and so is the only viable subset method when `p` is very large.
 
-## $C_p$
+## Cp
 
 For a fitted least squares model containing `d` predictors, the $C_p$ estimate of test MSE is computed using the equation
 
-$C_p = \frac{1}{n}(RSS + 2d\hat{\sigma}^2$
+$C_p = \frac{1}{n}(RSS + 2d\hat{\sigma}^2)$
 
 The $C_p$ statistic tends to take on a small value for models with a low test error, so when determining which of a set of models is best, we choose the model with the lowest $C_p$ value.
 
@@ -42,10 +42,50 @@ The $C_p$ statistic tends to take on a small value for models with a low test er
 
 BIC is derived from a Bayesian point of view, but ends up looking similar to $C_p$. For the least squares model with `d` predictors, the BIC is, up to irrelevant constants, given by
 
-$BIC = \frac{1}{n\sigma^2}(RSS + log(n)d\sigma^2$
+$BIC = \frac{1}{n\sigma^2}(RSS + log(n)d\sigma^2)$
 
 Like $C_p$, the BIC will tend to take on a small value for a model with a low test error, and so generally we select the model that has the lowest BIC value. 
 
+## Adjusted R-squared
+
+The adjusted R-squared compares the explanatory power of regression models that contain different numbers of predictors.
+
+Suppose you compare a five-predictor model with a higher R-squared to a one-predictor model. Does the five predictor model have a higher R-squared because it's better? Or is the R-squared higher because it has more predictors? Comparing the adjusted R-squared values for the models gives us a way to decide between the two while mitigating the increase in the R-squared statistic that results from simply adding predictors whether significant or not.
+
+The adjusted R-squared is a modified version of R-squared that has been adjusted for the number of predictors in the model. The adjusted R-squared increases only if the new term improves the model more than would be expected by chance. It decreases when a predictor improves the model by less than expected by chance. The adjusted R-squared can be negative, but it's usually not.  It is always lower than the R-squared.
+
+## Ridge Regression
+
+Ridge regression is a model regularization method that utilizes shrinkage (i.e. ridge regression shrinks the coefficient estimates towards zero).
+
+* Ridge Regression controls shrinkage via a tuning parameter, $\lambda$.  When $\lambda = 0$, the penalty term has no effect, and ridge regression will produce the least squares estimates. However, as $\lambda \rightarrow \infty$, the impact of the shrinkage penalty grows, and the ridge regression coefficient estimates will approach zero.
+* Ridge Regression, unlike the Lasso below, will always generate a model involving all predictors.  Increasing the value of $\lambda$ will tend to reduce the magnitudes of the coefficients, but will not result in exclusion of any of the variables.
+* Ridge Regression is affected by scale, so it is best to apply ridge regression after _standardizing the predictors_ so that they are all on the same scale.
+* Ridge regression's advantage over least squares is rooted in the bias-variance trade-off. As $\lambda$ increases, the flexibility of the ridge regression fit decreases, leading to decreased variance but increased bias.
+* Ridge regression works best in situations where the least squares estimates have high variance.
+
+## The Lasso
+
+As with ridge regression, the lasso shrinks the coefficient estimates towards zero. However, in the case of the lasso, the $l_1$ penalty has the effect of forcing some of the coefficient estimates to be exactly equal to zero when the tuning parameter $\lambda$ is sufficiently large. Hence, much like best subset selection, the lasso performs _variable selection_.
+
+* The lasso yields sparse models-that is, models that involve only a subset of the variables.
+
+## Principal Component Regression (PCR)
+
+In statistics, principal component regression (PCR) is a regression analysis technique that is based on principal component analysis (PCA).  Typically, it considers regressing the outcome (also known as the response or the dependent variable) on a set of covariates (also known as predictors, or explanatory variables, or independent variables) based on a standard linear regression model, but uses PCA for estimating the unknown regression coefficients in the model.
+
+In PCR, instead of regressing the dependent variable on the explanatory variables directly, the principal components of the explanatory variables are used as regressors. One typically uses only a subset of all the principal components for regression, thus making PCR some kind of a regularized procedure. Often the principal components with higher variances (the ones based on eigenvectors corresponding to the higher eigenvalues of the sample variance-covariance matrix of the explanatory variables) are selected as regressors. However, for the purpose of predicting the outcome, the principal components with low variances may also be important, in some cases even more important.
+
+One major use of PCR lies in overcoming the multicollinearity problem which arises when two or more of the explanatory variables are close to being collinear.  PCR can aptly deal with such situations by excluding some of the low-variance principal components in the regression step. In addition, by usually regressing on only a subset of all the principal components, PCR can result in dimension reduction through substantially lowering the effective number of parameters characterizing the underlying model. This can be particularly useful in settings with high-dimensional covariates. Also, through appropriate selection of the principal components to be used for regression, PCR can lead to efficient prediction of the outcome based on the assumed model.
+
+[Source](https://en.wikipedia.org/wiki/Principal_component_regression)
+
+
+The PCR involves identifying linear combinations, or directions, that best represent the predictors X1,...,Xp. These directions are identified in an unsupervised way, since the response Y is not used to help determine the principal component directions. That is, the response does not supervise the identification of the principal components.  Consequently, PCR suffers from a drawback: there is no guarantee that the directions that best explain the predictors will also be the best directions to use for predicting the response.
+
+## Partial Least Squares (PLS)
+
+Partial least squares (PLS) is  a supervised alternative to partial least PCR. Like PCR, PLS is a dimension reduction method, which first identifies squares a new set of features Z1,...,ZM that are linear combinations of the original features, and then fits a linear model via least squares using these M new features. But unlike PCR, PLS identifies these new features in a supervised way-that is, it makes use of the response Y in order to identify new features that not only approximate the old features well, but also that are related to the response. Roughly speaking, the PLS approach attempts to find directions that help explain both the response and the predictors. 
 
 # Lab Exercises
 
@@ -158,6 +198,364 @@ summary(fit)$outmat
 
 For this data, the best one-variable through six-variable models are each identical for best subset and forward selection.  However, the best seven-variable models identified by forward stepwise selection, backward stepwise selection, and best subset selection are different.
 
+### Choosing Among Models Using the Validation Set Approach and Cross-Validation
+
+__Validation Set Approach__
+
+First, create the training and test sets:
+
+```{r}
+set.seed(1)
+
+train = sample(c(T, F), nrow(data), replace = T)
+test = (!train)
+```
+
+Next, train the best subset model on the training data, and create a matrix out of the test observations:
+
+```{r}
+fit = regsubsets(Salary ~ ., data = data[train, ], nvmax = 19)
+
+# This command makes a matrix out of the values in the Hitters dataframe and adds an (Intercept) term as well as
+# converting qualitative variables to dummies
+mat = model.matrix(Salary ~ ., data = data[test, ])
+```
+
+OK, at this point we have a set of coefficients from the trained model, and a set of values from the held out test set.  What we should be able to do is multiply the coefficients of the trained model against the values in the test matrix, obtain a prediction for Salary, and then measure how well the predictions fit the actual values:
+
+```{r}
+# Container for the error rate for each of the 19 models
+errs = rep(0, 19)
+
+# Loop through each model
+for (i in 1:19) {
+  # Obtain coefficients for the ith model
+  c = coef(fit, id = i)
+
+  # Obtain values from the test data matrix lining up w/ the columns selected by the model
+  v = mat[, names(c)]
+
+  # Use matrix multiplication to multiply the fitted coefficients with the test data values
+  p = v %*% c
+
+  # Calculate and record the prediction errors
+  errs[i] = mean((data$Salary[test] - p)^2)
+}
+
+{
+  print(errs)
+  print(which.min(errs))
+}
+
+```
+
+So the model with 10 predictors has the lowest error rating on the test data set.
+
+```{r}
+coef(fit, 10)
+```
 
 
+Finally, we perform best subset selection on the full data set, and select the best ten-variable model. It is important that we make use of the full data set in order to obtain more accurate coefficient estimates. Note that we perform best subset selection on the full data set and select the best ten variable model, rather than simply using the variables that were obtained from the training set, because the best ten-variable model on the full data set may differ from the corresponding model on the training set. 
+
+```{r}
+best = regsubsets(Salary ~ ., data = data, nvmax = 19)
+coef(best ,10)
+```
+
+In fact, we see that the best ten-variable model on the full data set has a different set of variables than the best ten-variable model on the training set.
+
+__Cross-Validation Approach__
+
+First, create a helper function to calculate predictions:
+
+```{r}
+predict.regsubsets = function(object,newdata,id,...){
+  form=as.formula(object$call [[2]])
+  mat=model.matrix(form,newdata )
+  coefi=coef(object,id=id)
+  xvars=names(coefi)
+  mat[,xvars]%*%coefi
+}
+```
+
+
+We will now create a set of K = 10 folds the tedious way:
+
+```{r}
+# Init
+k = 10
+set.seed(1)
+
+# Create the set of 'folds'
+folds = sample(1:k, nrow(data), replace = T)
+
+# Create container to store the error rates; 10 fittings per model; 19 models 
+# dimnames == NULL or a list of length 2 giving the row and column names respectively. 
+err = matrix(data = NA, nrow = k, ncol = 19, dimnames = list(NULL, paste(1:19)))
+```
+
+Train the models using cross-validation:
+
+```{r}
+for (j in 1:k) {
+  # Train the model using all folds but one - this gives us 19 trained models w/ the 'best' combination of predictors from 1 to 19
+  fit = regsubsets(Salary ~ ., data = data[folds != j, ], nvmax = 19)
+  
+  # Calculate the prediction error for each model on the held out data fold
+  for (i in 1:19){
+    p = predict.regsubsets(fit, data[folds == j, ], id = i)
+    err[j, i] = mean((data$Salary[folds ==j] - p)^2)
+  }
+}
+```
+
+Sum the errors for each model for each fold, and select the model that had the lowest error rate:
+
+```{r}
+e = apply(err, 2, mean)
+e
+```
+
+And we can plot them visually:
+
+```{r}
+par(mfrow = c(1,1))
+plot(e, type = 'b')
+```
+
+So the model with 11 predictors has the lowest error rating on the test data set.  We now fit the model using the full data set and examine the final coefficients.
+
+```{r}
+best = regsubsets(Salary ~ ., data = data, nvmax = 19)
+coef(best, id = 11)
+```
+
+
+## Lab 2: Ridge Regression and the Lasso
+
+The `glmnet` function supports both Ridge Regression and Lasso.
+
+```{r}
+library(glmnet)
+# ?glmnet
+```
+
+* If `alpha = 1` is the lasso penalty is applied, and if `alpha = 0` the ridge penalty is applied.  
+* By default `glmnet` computes its own lambda sequence based on nlambda and lambda.min.ratio; supplying a value of lambda overrides this. 
+* Also by default `glmnet()` standardizes the variables so that they are on the same scale, which is critical for Ridge Regression
+
+* `glmnet` also expects an `x` matrix as well as a `y` vector:
+
+```{r}
+# Create the X matrix; exclude the intercept
+x = model.matrix(Salary ~ ., data = data)[, -1]
+
+# Collect the Y values
+y = data$Salary
+```
+
+And finally, we'll want a test and train set:
+
+```{r}
+set.seed(1)
+
+# Half the data is training data
+train = sample(1:nrow(x), nrow(x)/2)
+
+# The other half is test data
+test = (-train)
+
+x.train = x[train,]
+x.test = x[test,]
+y.train = y[train]
+y.test = y[test]
+```
+
+
+### Ridge Regression
+
+Create a custom lambda sequence where $\lambda = 10^{10}$ to $\lambda = 10^{-2}$:
+
+```{r}
+lambdaGrid = 10^seq(10, -2, length = 100)
+```
+
+
+Fit the model:
+
+```{r}
+fit = glmnet(x.train, y.train, alpha = 0, lambda = lambdaGrid)
+dim(coef(fit))
+```
+
+The result is a coefficient matrix of 100 columns, one for each lambda value, and 20 rows, one for each predictive variable plus the intercept.
+
+```{r}
+# Lambda values for the first model's coefficients
+coef(fit)[,1]
+```
+
+Compute the predictions and error rates:
+
+```{r}
+err = rep(0, 100)
+
+for (i in 1:100) {
+  p = predict(fit, s = lambdaGrid[i], newx = x.test)
+  err[i] = mean((p - y.test)^2)
+}
+
+plot(err, type = 'l', ylab = "Error", xlab = "Lambda Grid Index")
+```
+
+Print the smallest error rate and corresponding lambda value:
+
+```{r}
+{
+print(err[which.min(err)])
+print(lambdaGrid[which.min(err)])
+}
+```
+
+Compare our results above to an optimal lambda value determined via cross-validation:
+
+```{r}
+set.seed(1)
+cv = cv.glmnet(x.train, y.train, alpha = 0)
+plot(cv)
+```
+
+```{r}
+cv$lambda.min
+```
+
+```{r}
+l = cv$lambda.min
+p = predict(fit, s = l, newx = x.test)
+e = mean((p - y.test)^2)
+
+{
+  print(e)
+  print(l)
+}
+```
+
+Both methods give almost exactly the same result.  
+
+We can refit the model using all the data and note that none of the coefficients are zero, as Ridge Regression is not a variable selection model:
+
+```{r}
+fit = glmnet(x, y, alpha = 0)
+predict(fit, type = "coefficients", s = l)[1:20,]
+```
+
+### The Lasso
+
+We will now fit and examine the Hitters data utilizing a Lasso model.
+
+```{r}
+fit = glmnet(x.train, y.train, alpha = 1, lambda = lambdaGrid)
+plot(fit)
+```
+
+Unlike Ridge Regression we can see that some coefficients have been set to zero for various tuning parameter values.  Like Ridge Regression above we can use cross-validation to find the optimal lambda value and compute the error rate:
+
+```{r}
+set.seed(1)
+cv = cv.glmnet(x.train, y.train, alpha = 1)
+plot(cv)
+```
+
+```{r}
+l = cv$lambda.min
+p = predict(fit, s = l, newx = x.test)
+e = mean((p - y.test)^2)
+
+{
+  print(e)
+  print(l)
+}
+```
+
+The error rate is very close to that of the Ridge Regression model which was 96012.47.  However, if we examine the coefficients we can see that they are sparse (i.e. a number of them have been set to zero) since The Lasso is a variable selection model:
+
+```{r}
+fit = glmnet(x, y, alpha = 1)
+predict(fit, type = "coefficients", s = l)[1:20,]
+```
+
+
+## Lab 3: PCR and PLS Regression
+
+### Principal Component Regression (PCR)
+
+We'll utilize PCR on the Hitter's data to predict salary.  Note that in the function call below:
+
+* `scale = T` standardizes each predictor prior to generating the principal components
+* `validation = 'cv'`  causes `pcr()` to compute the ten-fold cross-validation error for each possible value of M, the number of principal components used.
+
+```{r}
+library(pls)
+set.seed(2)
+
+fit = pcr(Salary ~ ., data = data, scale = T, validation = 'CV')
+summary(fit)
+```
+
+The summary indicates that the model using `M = 16` components has the lowest adjusted CV error rate of 345.5.  This is only three fewer than simply using all 19 of the model's variables.  Also note that that `pcr()` reports the root mean squared error;in order to obtain the MSE we must square this quantity.  So the `M = 16` root mean squared error of 345.5 corresponds to an MSE of 119370.2.
+
+The summary() function also provides the percentage of variance explained in the predictors and in the response using different numbers of components. Briefly, we can think of this as the amount of information about the predictors or the response that is captured using M principal components. For example, setting M = 1 only captures 38.31% of all the variance, or information, in the predictors. In contrast, using M = 6 increases the value to 88.63%. If we were to use all M = p = 19 components, this would increase to 100%. 
+
+We can also visually inspect the cross-validation scores using the `validationplot()` validation plot() function. Using `val.type = "MSEP"` argument will cause the cross-validation MSE to be plotted.
+
+```{r}
+validationplot(fit, val.type = 'MSEP')
+```
+
+We can now do the same thing again on the train and test data:
+
+```{r}
+set.seed(1)
+
+fit = pcr(Salary ~ ., data = data, scale = T, validation = 'CV', subset = train)
+summary(fit)
+```
+
+```{r}
+validationplot(fit, val.type = 'MSEP')
+```
+
+The lowest cross-validation error occurs when `M = 7` on the training data, and we can utilize the test data to compute the test MSE:
+
+```{r}
+pred = predict(fit, x.test, ncomp = 7)
+mean((pred - y.test)^2)
+```
+
+### Partical Least Squares (PLS)
+
+Mechanically implementing PLS is almost the same as implementing PCR; we simply call the `plsr()` function instead of `pcr()`:
+
+```{r}
+set.seed(1)
+fit = plsr(Salary ~ ., data = data, subset = train, scale = T, validation = 'CV')
+summary(fit)
+```
+
+The lowest cross-validation error occurs when only `M = 2` partial least squares directions are used. We now evaluate the corresponding test set MSE.
+
+```{r}
+pred = predict(fit, x.test, ncomp = 2)
+mean((pred - y.test)^2)
+```
+
+The test MSE is comparable to, but slightly higher than, the test MSE obtained using ridge regression, the lasso, and PCR.  Finally, we perform PLS using the full data set, using `M = 2`, the number of components identified by cross-validation.
+
+```{r}
+fit = plsr(Salary ~ ., data = data, scale = T, ncomp = 2)
+summary(fit)
+```
+
+Notice that the percentage of variance in Salary that the two-component PLS fit explains, 46.40%, is almost as much as that explained using the final seven-component model PCR fit, 46.69%.  This is because PCR only attempts to maximize the amount of variance explained in the predictors, while PLS searches for directions that explain variance in both the predictors and the response. 
 
