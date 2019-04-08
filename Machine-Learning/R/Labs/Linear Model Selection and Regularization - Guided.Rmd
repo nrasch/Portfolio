@@ -7,6 +7,12 @@ output:
 
 # Definitions
 
+## MSE vs MSPE
+
+* Mean squared error (MSE) measures the expected squared distance between an estimator and the true underlying parameter.
+* The mean squared prediction error (MSPE) measures the expected squared distance between what your predictor predicts for a specific value and what the true value is.
+
+
 ## Best Subset Selection
 
 To perform best subset selection, we fit a separate least squares regression for each possible combination of the `p` predictors. That is, we fit all `p` models selection that contain exactly one predictor, all $(^{p}_{2}) = p(p - 1)/2$ models that contain exactly two predictors, and so forth. We then look at all of the resulting models, with the goal of identifying the one that is best.
@@ -98,6 +104,11 @@ library(ISLR)
 attach(Hitters)
 head(Hitters)
 ```
+
+```{r}
+dim(Hitters)
+```
+
 
 We do have some 'NA' values in the data, so let's identify which columns contain missing values:
 
