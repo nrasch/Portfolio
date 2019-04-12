@@ -1,0 +1,34 @@
+---
+title: "R Snippets"
+output: html_notebook
+---
+
+# Helpful links
+
+* [R Data Frame](https://www.datamentor.io/r-programming/data-frame/)
+* [Data Frames and Plotting](https://www.stat.berkeley.edu/~s133/R-4a.html)
+
+
+# Create an empty dataframe and add new rows to it
+
+```{r}
+df = data.frame(Model = character(),
+                MSPE = double(),
+                stringsAsFactors=FALSE)
+
+summary(df)
+```
+
+```{r}
+df = rbind(df, data.frame('Model' = "ABC", 'MSPE' = 12.34))
+df = rbind(df, data.frame('Model' = "EFG", 'MSPE' = 56.78))
+df = rbind(df, data.frame('Model' = "QSC", 'MSPE' = 43.19))
+df
+```
+
+# Sort the dataframe by a given column
+
+```{r}
+df[order(df$MSPE),]
+```
+
