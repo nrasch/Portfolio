@@ -585,3 +585,4 @@ print(confusionMatrix(factor(pred), factor(Caravan[range,]$Purchase))$table)
 ```
 
 The model now outputs predictions that over five times better than randomly guessing.
+

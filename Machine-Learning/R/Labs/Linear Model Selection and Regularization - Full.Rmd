@@ -1,0 +1,960 @@
+---
+title: "Linear Model Selection and Regularization - Full"
+output:
+  html_document:
+    df_print: paged
+---
+
+# 8
+
+In this exercise, we will generate simulated data, and will then use this data to perform best subset selection.
+
+## a
+
+Use the rnorm() function to generate a predictor X of length n = 100, as well as a noise vector e of length n = 100.
+
+```{r}
+set.seed(1)
+x = rnorm(n = 100)
+e = rnorm(n = 100, mean = 0, sd = 5)
+```
+
+
+## b
+
+Generate a response vector Y of length n = 100 according to the model $Y = \beta_0 + \beta_1X + \beta_2X^2 + \beta_3X^3 + \epsilon$, where B0 through B3 are constants of your choice.
+
+```{r}
+y = 2 + 4*x + 6*(x^2) + 8*(x^3) + e
+plot(x, y)
+```
+
+
+## c
+
+Use the regsubsets() function to perform best subset selection in order to choose the best model containing the predictors X, X2,...,X10. What is the best model obtained according to Cp, BIC, and adjusted R-squared? Show some plots to provide evidence for your answer, and report the coefficients of the best model obtained.
+
+```{r, message=FALSE, warning=FALSE}
+library(leaps)
+```
+
+```{r}
+data = data.frame(y = y, x = x)
+head(data)
+```
+
+```{r}
+fit = regsubsets(y ~ poly(x, degree = 10, raw = T), data = data, nvmax = 10)
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+```{r}
+# Difference in BIC Scores when P = 4 and P = 3:
+print(sfit$bic[4] - sfit$bic[3])
+```
+
+The adjusted R-squared and Cp statistics have the best scores when the number of predictors was four, and the BIC had the best score when the number of predictors was three.  
+
+Does this matter?  An article on the subject:  https://www.methodology.psu.edu/resources/aic-vs-bic/.  Also note that the Cp (i.e. Mallows Cp) is a a variant of AIC developed by Colin Mallows, so we can assume the comments in the PSU article apply equally to the Cp statistic.
+
+From the article:
+
+> But despite various subtle theoretical differences, their [i.e. AIC/Cp and BIC] only difference in practice is the size of the penalty; BIC penalizes model complexity more heavily. The only way they should disagree is when AIC chooses a larger model than BIC.
+
+And this is exactly what we see above where the Cp model optimizes at four parameters and the BIC model optimizes on three.  For all intents and purposes then we will say the best model using best subset selection is P = 3 (i.e. we'll favor the simpler model over the more complex one).  
+
+The coefficients for P = 3 are:
+
+```{r}
+coefficients(fit, id = 3)
+```
+
+These are very close to the true beta values of (2,4,6,8).  The coefficients for P = 4 for comparison:
+
+```{r}
+coefficients(fit, id = 4)
+```
+
+So, although the number of predictors is similar between the models, _which_ predictors were selected by the models differs greatly.
+
+
+## d
+
+### Forward stepwise selection
+
+```{r}
+# Forward stepwise selection
+fit = regsubsets(y ~ poly(x, degree = 10, raw = T), data = data, method = 'forward')
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+### Backward stepwise selection
+
+```{r}
+# Forward stepwise selection
+fit = regsubsets(y ~ poly(x, degree = 10, raw = T), data = data, method = 'backward')
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+Again the Cp and BIC differ in model size, but as we discussed earlier it is to be expected and makes sense.  We'll settle on the best subset selection where P = 6 (again favoring the simpler model) and examine the coefficients:
+
+```{r}
+coefficients(fit, id = 6)
+```
+
+## e
+
+Now fit a lasso model to the simulated data, again using X, X2^,...,X^10 as predictors. Use cross-validation to select the optimal value of lambda. Create plots of the cross-validation error as a function of lambda. Report the resulting coefficient estimates, and discuss the results obtained.
+
+```{r, message=FALSE, warning=FALSE}
+library(glmnet)
+```
+
+The `glmnet` function supports both Ridge Regression and Lasso.  
+
+* If `alpha = 1` is the lasso penalty is applied, and if `alpha = 0` the ridge penalty is applied.  
+* By default `glmnet` computes its own lambda sequence based on nlambda and lambda.min.ratio; supplying a value of lambda overrides this. 
+* Also by default `glmnet()` standardizes the variables so that they are on the same scale, which is critical for Ridge Regression
+* The `glmnet` function also expects an `x` matrix as well as a `y` vector
+
+```{r}
+# Create the X matrix; exclude the intercept
+xm = model.matrix(y ~ poly(x, degree = 10, raw = T), data = data)[, -1]
+# Collect the Y values
+y = y
+```
+
+And finally, we'll want a test and train set:
+
+```{r}
+set.seed(1)
+
+# Half the data is training data
+train = sample(1:nrow(xm), nrow(xm)/2)
+
+# The other half is test data
+test = (-train)
+
+x.train = xm[train,]
+x.test = xm[test,]
+y.train = y[train]
+y.test = y[test]
+```
+
+Fit the Lasso model (note alpha = 1) using cross-validation and plot the error rate:
+
+```{r}
+set.seed(1)
+cv = cv.glmnet(x.train, y.train, alpha = 1)
+plot(cv)
+```
+
+We can now made predictions on the test data and compute the error rate:
+
+```{r}
+l = cv$lambda.min
+p = predict(cv, s = l, newx = x.test)
+err = mean((p - y.test)^2)
+
+{
+  print(err)
+  print(l)
+}
+```
+
+So the error rate is 22.7 with an optimal lambda value of 0.6.  If we examine the coefficients we can see that they are sparse (i.e. a number of them have been set to zero) since The Lasso is a variable selection model:
+
+```{r}
+fit = glmnet(xm, y, alpha = 1)
+predict(fit, type = "coefficients", s = l)
+```
+
+We can also note that the Lasso model does a fairly good job of picking coefficient values that are close to the true values of Beta.  For example we have true vs. model coefficients as intercept 2 => 3.09, first term 4 => 4.4, second term 6 => 3.93, and third term 8 => 7.12. 
+
+## f
+
+Now generate a response vector Y according to the model $Y = \beta_0 + \beta_7{X^7} + \epsilon$, and perform best subset selection and the lasso.  Discuss the results obtained.
+
+```{r}
+y2 = 2 + 1.5 * (x^7) + e
+data2 = data.frame(y2 = y2, x = x)
+```
+
+__best subset selection__
+
+```{r}
+fit = regsubsets(y2 ~ poly(x, degree = 10, raw = T), data = data2, nvmax = 10)
+sfit = summary(fit)
+
+par(mfrow = c(1,3))
+{
+  plot(sfit$adjr2, type = 'b', ylab = "Adjusted R-squared Score", xlab = "Subset Size", main = "R-squared")
+  abline(v = which.max(sfit$adjr2), col = "blue")
+  plot(sfit$cp, type = 'b', ylab = "Cp Score", xlab = "Subset Size", main = "Cp")
+  abline(v = which.min(sfit$cp), col = "blue")
+  plot(sfit$bic, type = 'b', ylab = "BIC Score", xlab = "Subset Size", main = "BIC")
+  abline(v = which.min(sfit$bic), col = "blue")
+}
+```
+
+```{r}
+coefficients(fit, id = 1)
+```
+
+```{r}
+coefficients(fit, id = 2)
+```
+
+```{r}
+coefficients(fit, id = 4)
+```
+
+
+
+__Lasso__
+
+```{r}
+xmat = model.matrix(y2 ~ poly(x, 10 , raw = T))[,-1]
+cv = cv.glmnet(xmat, y2, alpha = 1)
+l = cv$lambda.min
+
+par(mfrow=c(1,1))
+
+plot(cv)
+```
+
+```{r}
+predict(cv, s=l, type="coefficients")
+```
+
+__discussion__
+
+The best subset selection model picks predictor variable counts of 4, 2, and 1 for the R-squared, Cp, and BIC scores respectively.  If we examine the coefficient estimates we see the BIC model's beta values are almost equal to the true beta values we created the data set with.  
+
+The Lasso's coefficient estimates are also almost equal to the true beta values we created the data set with.
+
+Based on the experiments we've conducted above I would tend to favor either best subset selection using BIC or the Lasso to predict the best model and model parameters.
+
+
+# 9
+
+First, create a dataframe to hold model results:
+
+```{r}
+results =  data.frame(
+  Model = character(),
+  MSPE = integer(),
+  stringsAsFactors=FALSE
+)
+```
+
+
+In this exercise, we will predict the number of applications received using the other variables in the College data set.
+
+```{r}
+library(ISLR)
+attach(College)
+head(College)
+```
+
+```{r}
+names(College)
+```
+
+
+```{r}
+dim(College)
+```
+
+```{r}
+summary(College)
+```
+
+
+## a
+
+Split the data set into a training set and a test set.
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+```
+
+
+```{r}
+{
+  set.seed(1)
+  
+  # 80/20 split of the data into train/test
+  index = sample(seq_len(nrow(College)), size = floor(0.8 * nrow(College)))
+  
+  train = College[index, ]
+  test = College[-index, ]
+  
+  train.matrix = model.matrix(Apps ~ ., data = College[index,])[,-1]
+  test.matrix = model.matrix(Apps ~ ., data = College[-index,])[,-1]
+}
+
+{
+  print(dim(train))
+  print(dim(test))
+  
+  print(dim(train.matrix))
+  print(dim(test.matrix))
+}
+```
+
+```{r}
+# ?seq_len
+```
+
+
+## b
+
+Fit a linear model using least squares on the training set, and report the test error obtained.
+
+```{r}
+{
+  fit = lm(Apps ~ ., data = College, subset = index)
+  p = predict(fit, newdata = College[-index, ])
+  err = mean( (p - College[-index, ]$Apps)^2 )
+  results[nrow(results)+1,] = list('Least Squares', err)
+  results
+}
+```
+
+## c
+
+Fit a ridge regression model on the training set, with lamba chosen by cross-validation. Report the test error obtained.
+
+```{r}
+{
+set.seed(1)
+cv = cv.glmnet(train.matrix, train$Apps, alpha = 0)
+
+l = cv$lambda.min
+p = predict(cv, s = l, newx = test.matrix)
+e = mean((p - test$Apps)^2)
+
+results[nrow(results)+1,] = list('Ridge Regression', e)
+results
+}
+```
+
+## d
+
+Fit a lasso model on the training set, with lambda chosen by crossvalidation. Report the test error obtained, along with the number of non-zero coefficient estimates.
+
+```{r}
+{
+set.seed(1)
+cv = cv.glmnet(train.matrix, train$Apps, alpha = 1)
+
+l = cv$lambda.min
+p = predict(cv, s = l, newx = test.matrix)
+e = mean((p - test$Apps)^2)
+
+results[nrow(results)+1,] = list('The Lasso', e)
+results
+}
+```
+
+```{r}
+fit = glmnet(model.matrix(Apps ~ ., data = College)[, -1], College$Apps, alpha = 1)
+round(predict(fit, s = l, type = "coefficients"))
+```
+
+## e
+
+Fit a PCR model on the training set, with M chosen by crossvalidation. Report the test error obtained, along with the value of M selected by cross-validation.
+
+```{r, message=FALSE, warning=FALSE}
+library(pls)
+```
+
+```{r}
+{
+set.seed(1)
+
+fit = pcr(Apps ~ ., data = College[index, ], scale = T, validation = 'CV')
+summary(fit)
+}
+```
+
+```{r}
+validationplot(fit, val.type = "MSEP")
+```
+
+
+The lowest adjusted CV error rate is 1155 with M = 17 (i.e. no reduction of dimensionality provided better results than utilizing the full set of predictor variables -- at least with this sample set of training data).  We can now calculate the error rate on the test data which results in exactly the same error value as the linear regression model:
+
+
+```{r}
+{
+pred = predict(fit, College[-index, ], ncomp = 17)
+e = mean( (pred - College[-index, ]$Apps)^2)
+
+results[nrow(results)+1,] = list('PRC', e)
+results
+}
+```
+
+## f
+
+Fit a PLS model on the training set, with M chosen by crossvalidation. Report the test error obtained, along with the value of M selected by cross-validation.
+
+```{r}
+{
+set.seed(1)
+
+fit = plsr(Apps ~ ., data = College[index, ], scale = T, validation = 'CV')
+summary(fit)
+}
+```
+
+```{r}
+validationplot(fit, val.type = "MSEP")
+```
+
+Once M = 10 the adjusted cross validation score reaches its minimal value of 1156.  We can now calculate the error rate:
+
+```{r}
+{
+pred = predict(fit, College[-index, ], ncomp = 10)
+e = mean( (pred - College[-index, ]$Apps)^2)
+
+results[nrow(results)+1,] = list('PLS', e)
+results
+}
+```
+
+
+## g
+
+Comment on the results obtained. How accurately can we predict the number of college applications received? Is there much difference among the test errors resulting from these five approaches?
+
+
+The test error rates for each model we considered from smallest to largest in tabular and graphical format:
+
+```{r}
+{
+results$MSPE = sapply(as.integer(results[, 2]), round)
+results[order(results$MSPE),]
+}
+```
+
+```{r}
+{
+  plot(results[order(results$MSPE),]$MSPE, type = 'l', ylab = "MSPE", xlab = "Model", xaxt="n")
+  axis(1, at = 1:5, labels = results[order(results$MSPE),]$Model)
+}
+```
+
+There is little difference in the models except for Ridge Regression which had the largest error rate, and the PRC which failed to reduce the number of predictors (and likely should be thrown out of the pool of possible models to be considered for this data set).  Next, we can plot the actual application figures for the test data set against the predicted number of applications given by the linear model:
+
+```{r}
+{
+  fit = lm(Apps ~ ., data = College[index, ])
+  p = predict(fit, newdata = College[-index, ])
+  
+
+  plot(test$Apps, col = 'blue', ylab = 'College Applications')
+  points(p, col = 'red')
+  legend('topleft', legend=c("Actual", "Predicted"), col=c("blue", "red"), lty = c(0,0), pch=c(1,1))
+}
+```
+
+For colleges where the number of applications was less than around 7,500 the model's predictions fit the actual values closely.  However, for colleges with applications > 7,500 the model became less accurate.  We can examine the diagnostic plots of the least squares model to look for insights into this behavior:
+
+```{r}
+plot(fit)
+```
+
+Observing the diagnostic plots for the least squares model we see three issues that would likely contribute to the model's lack of fit for all College application values:
+
+* The `Normal Q-Q` plot indicates the College data comes from a non-normal distribution.  (The tails in the `Normal Q-Q` that curve off in the extremities usually mean that the data has more extreme values than would be expected if it truly came from a Normal distribution.) 
+* The `Scale-Location` graph indicates the data homoscedasticity issues
+* The `Residuals vs Leverage` graph identifies at least one outlier with high leverage and several other values approaching outlier status
+
+
+
+# 10
+
+We have seen that as the number of features used in a model increases, the training error will necessarily decrease, but the test error may not.  We will now explore this in a simulated data set.
+
+## a
+
+Generate a data set with p = 20 features, n = 1,000 observations, and an associated quantitative response vector generated according to the model `Y = xB + e`, where B has some elements that are exactly equal to zero.
+
+```{r}
+{
+set.seed(1)
+
+e = rnorm(1000)
+x = matrix(rnorm(1000*20), nrow = 1000, ncol=20)
+b = sample(-5:5, 20, replace=TRUE)
+b[c(3,6,7,10,13,17)] = 0
+
+y = x %*% b + e
+hist(y, breaks = 100)
+}
+```
+
+## b
+
+Split your data set into a training set containing 100 observations and a test set containing 900 observations.
+
+```{r}
+{
+  set.seed(1)
+  
+  # 90/10 split of the data into train/test
+  index = sample(seq_len(nrow(y)), size = floor(0.9 * nrow(y)))
+  
+  data = as.data.frame(cbind(y, x))
+  colnames(data)[1] = 'y'
+  colnames(data)[2:21] = paste('B', seq(1:(ncol(data)-1)), sep = '')
+  
+  train = data[index, ]
+  test = data[-index, ]
+  
+  head(train)
+}
+```
+
+## c
+
+Perform best subset selection on the training set, and plot the training set MSE associated with the best model of each size.
+
+* Mean squared error (MSE) measures the expected squared distance between an estimator and the true underlying parameter.
+* The mean squared prediction error (MSPE) measures the expected squared distance between what your predictor predicts for a specific value and what the true value is.
+
+
+```{r}
+library(leaps)
+
+fit = regsubsets(y ~ ., data = train, nvmax = 20)
+# summary(fit)$outmat
+```
+
+```{r}
+# Container for each best subset selection model's MSE error rate
+errs = rep(20, 0)
+
+# Convert the dataset to a matrix - This keeps the values of B and adds an intercept term equal to one
+m = model.matrix(y ~ ., data = train)
+
+# For each model
+for (i in 1:20) {
+  # Pull model's coefficents
+  c = coef(fit, id = i)
+  
+  # Obtain values from the training data matrix lining up w/ the columns selected by the model
+  v = m[, names(c)]
+  
+  # Predict the Y values
+  p = v %*% c
+  
+  # Calculate the error of the Y value predictions vs. the actual training Y values
+  errs[i] = mean( (train$y - p)^2 )
+}
+
+{
+  print(which.min(errs))
+  print(errs[which.min(errs)])
+}
+
+```
+
+```{r}
+{
+  plot(errs, type = 'l', ylab = "Best Subset Selection Model MSE", xlab = "Number of Variables Included in the Model")
+  points( which.min(errs), errs[which.min(errs)], pch = 19, col = 'red')
+  text(which.min(errs)-1, errs[which.min(errs)]+6, labels = c("Best MSE"))
+}
+```
+
+So, as per the main idea behind this exercise, we observe that as the number of features used in a model increases the training error will necessarily decrease.
+
+## d
+
+Plot the test set MSE associated with the best model of each size.
+
+```{r}
+# Container for each best subset selection model's MSE error rate
+errs = rep(20, 0)
+
+# Convert the dataset to a matrix - This keeps the values of B and adds an intercept term equal to one
+m = model.matrix(y ~ ., data = test)
+
+# For each model
+for (i in 1:20) {
+  # Pull model's coefficents
+  c = coef(fit, id = i)
+  
+  # Obtain values from the test data matrix lining up w/ the columns selected by the model
+  v = m[, names(c)]
+  
+  # Predict the Y values
+  p = v %*% c
+  
+  # Calculate the error of the Y value predictions vs. the actual test Y values
+  errs[i] = mean( (test$y - p)^2 )
+}
+
+{
+  print(which.min(errs))
+  print(errs[which.min(errs)])
+}
+```
+
+```{r}
+{
+  plot(errs, type = 'l', ylab = "Best Subset Selection Model MSE", xlab = "Number of Variables Included in the Model")
+  points( which.min(errs), errs[which.min(errs)], pch = 19, col = 'red')
+  text(which.min(errs), errs[which.min(errs)]+6, labels = c("Best MSE"))
+}
+```
+
+## e
+
+For which model size does the test set MSE take on its minimum value? Comment on your results.
+
+The lowest MSE achieved on the test data set was when P = 13 with an MSPE rate of 1.108762.
+
+## f
+
+How does the model at which the test set MSE is minimized compare to the true model used to generate the data? Comment on the coefficient values.
+
+Pull the coefficient values for P = 13, which did best on the test set data:
+
+```{r}
+tmp = as.data.frame(t(coef(fit, id = 13)))
+```
+
+Add the true model coefficient values to the dataframe and print:
+
+```{r}
+{
+trueBetas = t(as.data.frame(c(1, b)))
+colnames(trueBetas)[2:21] = paste('B', seq(1:(ncol(data)-1)), sep = '')
+colnames(trueBetas)[1] = '(Intercept)'
+
+rbind(tmp, trueBetas[, names(tmp)])
+}
+```
+
+The coefficient values for the test set MSE minimized model and the true model used to generate the data are almost identical.  The best subset selection process was also able to eliminate those variables that were set to zero in the true model.  (We know from above that the values `b[c(3,6,7,10,13,17)] = 0` in the true model.)
+
+## g
+
+Plot each model's Beta values against the true model's Beta values. How does this compare to the test MSE plot from (d)?
+
+```{r}
+# Container for each best subset selection model's Beta value difference from the true model's Beta values
+errs = rep(20, 0)
+
+# For each model
+for (i in 1:20) {
+  # Pull best subset selection model's coefficents (i.e. Beta values) less the intercept
+  c = coef(fit, id = i)[-1]
+  #print(c)
+  
+  # Obtain beta values from the true model lining up w/ the columns selected by the best subset selection model
+  v = trueBetas[, names(c)]
+  #print(v)
+
+  # Calculate the error of the true model's beta values vs. the best subset selection model's beta values
+  errs[i] = sqrt(sum(v - c)^2)
+}
+
+plot(errs, type = 'l', xlab = 'Number of Variables Included in Model', ylab = 'Model Betas vs. True Model Betas Error')
+```
+
+```{r}
+which.min(errs[-1])
+errs
+```
+
+When computing test MSE the error rate went down monotonically as the number of variables increased until it flattened out at P = 13. The difference in beta values fluctuated up and down in contrast as the number of variables increased.  The minimum difference was reached at P = 11, and then the difference in betas increased.
+
+This leads us to conclude that a minimal difference in model Beta values vs. true Beta values don't necessarily correlate to a minimal or reduced model MSE error rate.
+
+
+# 11
+
+We will now try to predict per capital crime rate (crim) in the Boston data set.
+
+```{r, message=FALSE, warning=FALSE}
+{
+library(MASS)
+attach(Boston)
+dim(Boston)
+}
+```
+
+```{r}
+head(Boston)
+```
+
+```{r}
+summary(Boston)
+```
+
+```{r}
+#?Boston
+```
+
+__Create train and test sets__
+
+```{r}
+{
+  # 80/20 split of the data into train/test
+  index = sample(seq_len(nrow(Boston)), size = floor(0.8 * nrow(Boston)))
+  
+  train = Boston[index, ]
+  test = Boston[-index, ]
+  
+  train.matrix = model.matrix(crim ~ ., data = train)[,-1]
+  test.matrix = model.matrix(crim ~ ., data = test)[,-1]
+  
+  # Scaling reference:
+  # https://stats.stackexchange.com/questions/89172/how-to-scale-new-observations-for-making-predictions-when-the-model-was-fitted-w
+  
+  train.scaled = scale(train)
+  test.scaled = scale(test, attr(train.scaled, "scaled:center"), attr(train.scaled, "scaled:scale"))
+  
+  train.matrix.scaled = model.matrix(crim ~ ., data = as.data.frame(train.scaled))[,-1]
+  test.matrix.scaled = model.matrix(crim ~ ., data = as.data.frame(test.scaled))[,-1]
+}
+```
+
+
+## a
+
+Try out some of the regression methods explored in this chapter, such as best subset selection, the lasso, ridge regression, and PCR. Present and discuss results for the approaches that you consider.
+
+### Baseline - Least Squares
+
+As a baseline to compare the models against we'll first train a least squares model with 10-fold cross-validation on the Boston data set and compute the test set MSPE:
+```{r, message=FALSE, warning=FALSE}
+library(caret)
+library(tidyverse)
+```
+
+```{r}
+mspe = data.frame(Model = character(),
+                MSPE = double(),
+                stringsAsFactors=FALSE)
+
+set.seed(1)
+model <- caret::train(
+  crim ~ ., 
+  train.scaled,
+  method = "lm",
+  trControl = trainControl(
+    method = "cv", 
+    number = 10,
+    verboseIter = FALSE
+  )
+)
+
+summary(model)
+
+e = mean((as.data.frame(test.scaled)$crim - predict(model, test.scaled)) ^ 2)
+mspe = rbind(mspe, data.frame('Model' = "LS", 'MSPE' = e))
+```
+
+### Best Subset Selection
+
+__Helper Functions__
+
+```{r}
+get_model_formula <- function(id, object, outcome){
+  # Get the selected model as given by the 'id' argument value
+  models <- summary(object)$which[id,-1]
+
+  # Get a list of which predictors were selected by the model
+  predictors <- names(which(models == TRUE))
+  
+  # Build model formula
+  predictors <- paste(predictors, collapse = "+")
+  as.formula(paste0(outcome, "~", predictors))
+}
+
+get_cv_error <- function(model.formula, train.data){
+  set.seed(1)
+  
+  # Perform CV
+  train.control <- trainControl(method = "cv", number = 10)
+  cv <- train(model.formula, data = train.data, method = "lm", trControl = train.control)
+
+  # Return results
+  cv$results$RMSE
+}
+```
+
+__Train the models__
+
+```{r}
+# Create the collection of best subset collection models
+fit = regsubsets(crim ~ ., data = as.data.frame(train.scaled), nvmax = ncol(train.scaled)-1)
+
+# Perform k-fold Cross-validation on each model to determine which has the lowest error on the training data
+indices = 1:(ncol(train.scaled)-1)
+errs = map(indices, get_model_formula, fit, 'crim') %>%
+  map(get_cv_error, as.data.frame(train.scaled)) %>%
+  unlist()
+
+coef(fit, which.min(errs))
+```
+
+__Calculate test set MSPE__
+
+```{r}
+set.seed(1)
+model <- caret::train(
+  get_model_formula(which.min(errs), fit, 'crim'), 
+  test.scaled,
+  method = "lm"
+)
+
+summary(model)
+
+e = mean((as.data.frame(test.scaled)$crim - predict(model, test.scaled)) ^ 2)
+mspe = rbind(mspe, data.frame('Model' = "BSS", 'MSPE' = e))
+```
+
+
+### Ridge Regression
+
+We will utilize the caret library to train and select the best lamba value for the Ridge Regression model using the training data.  Also remember that RR is not a feature selection model, so all predictor variables will be included in the final output.
+
+```{r}
+# Setup 10-fold cross-validation
+fitControl <- trainControl(method = "cv", number = 10)
+set.seed(1)
+model <- caret::train(
+  crim ~ ., 
+  data = train.scaled,
+  method = "foba",
+  trControl = fitControl
+)
+
+model
+
+e = mean((as.data.frame(test.scaled)$crim - predict(model, test.scaled)) ^ 2)
+mspe = rbind(mspe, data.frame('Model' = "RR", 'MSPE' = e))
+```
+
+## The Lasso
+
+We will utilize the caret library to train and select the best lamba value for the Lasso model using the training data.  However, since the caret library doesn't have a generic "Lasso" implementation we'll utilize the Relaxed Lasso instead.  Additionally the Lasso is a feature selection model, so one or more of the predictor coefficients may be set to zero.
+
+```{r, message=FALSE, warning=FALSE}
+# Setup 10-fold cross-validation
+fitControl <- trainControl(method = "cv", number = 10)
+
+set.seed(1)
+model <- caret::train(
+  crim ~ ., 
+  data = train.scaled,
+  method = "relaxo",
+  trControl = fitControl
+)
+
+model
+
+e = mean((as.data.frame(test.scaled)$crim - predict(model, test.scaled)) ^ 2)
+mspe = rbind(mspe, data.frame('Model' = "LAS", 'MSPE' = e))
+```
+
+
+## Principal Component Analysis
+
+```{r}
+# Setup 10-fold cross-validation
+fitControl <- trainControl(method = "cv", number = 10)
+
+# Custom tuning grid
+grid <-  expand.grid(ncomp = (1:7))
+
+set.seed(1)
+model <- caret::train(
+  crim ~ ., 
+  data = train.scaled,
+  method = "pcr",
+  trControl = fitControl,
+  tuneGrid = grid
+)
+
+model
+
+e = mean((as.data.frame(test.scaled)$crim - predict(model, test.scaled)) ^ 2)
+mspe = rbind(mspe, data.frame('Model' = "PCA", 'MSPE' = e))
+```
+
+## Partial Least Squares
+
+```{r}
+# Setup 10-fold cross-validation
+fitControl <- trainControl(method = "cv", number = 10)
+
+# Custom tuning grid
+grid <-  expand.grid(ncomp = (1:7))
+
+set.seed(1)
+model <- caret::train(
+  crim ~ ., 
+  data = train.scaled,
+  method = "kernelpls",
+  trControl = fitControl,
+  tuneGrid = grid
+)
+
+model
+
+e = mean((as.data.frame(test.scaled)$crim - predict(model, test.scaled)) ^ 2)
+mspe = rbind(mspe, data.frame('Model' = "PLS", 'MSPE' = e))
+```
+
+## Summary
+
+```{r}
+mspe[order(mspe$MSPE),]
+```
+
+```{r}
+plot(mspe[order(mspe$MSPE),])
+```
+
+
