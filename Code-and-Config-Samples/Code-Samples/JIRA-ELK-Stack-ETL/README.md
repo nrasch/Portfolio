@@ -1,15 +1,8 @@
 # JIRA ELK Stack ETL
 
-## Background and discussion
+## Summary
 
-I needed a *quick and dirty* way to extract data from JIRA, load it into Elasticsearch, and then create a metrics dashboard with Kibana.  The canned JIRA reports just weren't cutting it, and I wanted to leverage the power of Elasticsearch and Kibana while performing custom modifications on several of the JIRA data columns.
-
-Is this code the most elegant, optimized, and ready for massive enterprise distribution ever written?  No. 
-
-Did it serve its purpose, and help me impress upper management in a matter of hours?  Yes.  
-
-Mission accomplished.  :)
-
+I needed a way to extract data from JIRA, load it into Elasticsearch, and then create a metrics dashboard with Kibana.  The canned JIRA reports just weren't cutting it, and I wanted to leverage the power of Elasticsearch and Kibana while performing custom modifications on several of the JIRA data columns
 
 ### A few tools I utilized
 * In order to pull the data out of JIRA I utilized a JIRA Command Line Interface (CLI), which can be found [here](https://marketplace.atlassian.com/plugins/org.swift.jira.cli/versions)
