@@ -4,23 +4,15 @@
 The following folder contains a number of writing examples illustrating clear, effective communication and writing.  The samples include:
 
 1. Hotfix workflow
-2. Technical issue resolution
-3. Release management development
-4. Business writing 
-5. Issue/root cause analysis
+2. Release management development
+3. Business writing 
+4. Issue/root cause analysis
 
 ## Hotfix Workflow
 
 * [HotFixWorkflow.png](https://github.com/nrasch/Portfolio/blob/master/Communication-and-Writing-Samples/1-HotFixWorkflow.png)
 
 Provides a diagram I created to guide the engineering department through the successful implementation and deployment of hotfixes.  The diagram was accompanied by a complete write-up detailing each step in the flow.  This process was successfully adopted by the department and was utilized on a regular basis to mitigate high priority, production affecting issues.
-
-## Issue Resolution
-
-* [2.1-IssueResolution-ImpromptuMeetingNotes.pdf](https://github.com/nrasch/Portfolio/blob/master/Communication-and-Writing-Samples/2.1-IssueResolution-ImpromptuMeetingNotes.pdf)
-* [2.2-IssueResolution-MarketPageIssuesEmail.pdf](https://github.com/nrasch/Portfolio/blob/master/Communication-and-Writing-Samples/2.2-IssueResolution-MarketPageIssuesEmail.pdf)
-
-These two email samples are between the director and vice president of engineering and myself.  We had a new market page launch coming up, and my team was leading the project.  Over the course of the work we hit a snag, and it required me to effectively explain the status of the project, the options available, my recommendations, as well as take a leadership role in issue mitigation. 
 
 ## Release Management
 
