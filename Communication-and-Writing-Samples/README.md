@@ -16,7 +16,6 @@ Provides a diagram I created to guide the engineering department through the suc
 
 ## Release Management
 
-* [3.1-ReleaseManagement-HowToTestPreReleaseCandidateStories.pdf](https://github.com/nrasch/Portfolio/blob/master/Communication-and-Writing-Samples/3.1-ReleaseManagement-HowToTestPreReleaseCandidateStories.pdf)
 * [3.2-ReleaseManagement-HowToCreateaReleaseCandidate.pdf](https://github.com/nrasch/Portfolio/blob/master/Communication-and-Writing-Samples/3.2-ReleaseManagement-HowToCreateaReleaseCandidate.pdf)
 * [3.3-ReleaseManagement-GettingStoriesfromDevelopmenttoQC.pdf](https://github.com/nrasch/Portfolio/blob/master/Communication-and-Writing-Samples/3.3-ReleaseManagement-GettingStoriesfromDevelopmenttoQC.pdf)
 
