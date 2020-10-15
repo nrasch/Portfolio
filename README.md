@@ -3,7 +3,7 @@
 Ph: (415) 290-2918<br/>
 Em: nathan@obsidiantech.net
 
-LinkedIn: https://www.linkedin.com/in/nathanrasch/
+LinkedIn: https://www.linkedin.com/in/nathanrasch/<br/>
 Blog: https://nrasch.github.io/
 
 EDUCATION:
