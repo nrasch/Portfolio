@@ -14,6 +14,6 @@ EDUCATION:
 CERTIFICATIONS:
 
 * Project Management Institute (PMI) PMP
-* Certified SAFe 5 Scrum Master (Scaled Agile, Inc.)
+* Certified SAFe 6 Scrum Master (Scaled Agile, Inc.)
 * Certified ScrumMaster (Scrum Alliance)
 * Zend Certified Engineer PHP 5
