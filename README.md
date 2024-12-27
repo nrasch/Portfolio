@@ -17,3 +17,7 @@ CERTIFICATIONS:
 * Certified SAFe 6 Scrum Master (Scaled Agile, Inc.)
 * Certified ScrumMaster (Scrum Alliance)
 * Zend Certified Engineer PHP 5
+
+CURRENT PROJECT:
+
+* [PyCraps](https://nbviewer.jupyter.org/github/nrasch/Portfolio/blob/master/Current-Project/Craps_v1.ipynb)
